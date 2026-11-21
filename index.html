@@ -1,0 +1,1325 @@
+<!doctype html>
+<html lang="id" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#1e3a8a" />
+    <meta name="description" content="Sistem Manajemen Aset Perusahaan" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Manajemen Aset</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%A6%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Terapkan tema sebelum render untuk mencegah kedipan -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("theme");
+          var dark = saved
+            ? saved === "dark"
+            : window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (dark) document.documentElement.classList.add("dark");
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: "#eff6ff",
+                100: "#dbeafe",
+                200: "#bfdbfe",
+                300: "#93c5fd",
+                400: "#60a5fa",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
+                800: "#1e40af",
+                900: "#1e3a8a",
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Library pihak ketiga (versi dikunci) -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+      defer
+    ></script>
+    <script
+      src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js"
+      defer
+    ></script>
+  </head>
+
+  <body
+    class="h-full bg-slate-100 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased"
+  >
+    <div id="app" class="min-h-full flex flex-col">
+      <!-- ========================= HEADER ========================= -->
+      <header
+        id="appHeader"
+        class="hidden sticky top-0 z-30 safe-top bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-800"
+      >
+        <div
+          class="flex items-center justify-between h-14 px-4 max-w-5xl mx-auto"
+        >
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span
+              class="grid place-items-center w-8 h-8 rounded-lg bg-brand-600 text-white shrink-0"
+            >
+              <i data-lucide="package" class="w-4 h-4"></i>
+            </span>
+            <div class="min-w-0">
+              <h1 id="headerTitle" class="text-sm font-semibold truncate">
+                Manajemen Aset
+              </h1>
+              <p
+                id="headerUser"
+                class="text-xs text-slate-500 dark:text-slate-400 truncate"
+              ></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button
+              id="btnTheme"
+              type="button"
+              class="icon-btn"
+              aria-label="Ganti tema"
+            >
+              <i data-lucide="moon" class="w-5 h-5"></i>
+            </button>
+            <button
+              id="btnLogout"
+              type="button"
+              class="icon-btn"
+              aria-label="Keluar"
+            >
+              <i data-lucide="log-out" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- ========================= KONTEN ========================= -->
+      <main id="main" class="flex-1 w-full max-w-5xl mx-auto px-4 py-4 pb-32">
+        <!-- ---------- LOGIN ---------- -->
+        <section
+          id="view-login"
+          data-view="login"
+          class="view hidden pt-6 sm:pt-16"
+        >
+          <div class="max-w-sm mx-auto">
+            <div class="text-center mb-8">
+              <span
+                class="inline-grid place-items-center w-14 h-14 rounded-2xl bg-brand-600 text-white shadow-lg shadow-brand-600/30"
+              >
+                <i data-lucide="package" class="w-7 h-7"></i>
+              </span>
+              <h2 class="mt-4 text-xl font-bold">Sistem Manajemen Aset</h2>
+              <p class="text-sm text-slate-500 dark:text-slate-400">
+                Masuk dengan akun yang diberikan admin
+              </p>
+            </div>
+
+            <form id="formLogin" novalidate class="card space-y-4">
+              <div>
+                <label for="loginUsername" class="label">Username</label>
+                <input
+                  id="loginUsername"
+                  name="username"
+                  type="text"
+                  autocomplete="username"
+                  autocapitalize="none"
+                  spellcheck="false"
+                  maxlength="50"
+                  required
+                  class="input"
+                />
+                <p class="field-error" data-err="username"></p>
+              </div>
+              <div>
+                <label for="loginPassword" class="label">Password</label>
+                <div class="relative">
+                  <input
+                    id="loginPassword"
+                    name="password"
+                    type="password"
+                    autocomplete="current-password"
+                    maxlength="128"
+                    required
+                    class="input pr-12"
+                  />
+                  <button
+                    id="btnTogglePassword"
+                    type="button"
+                    class="icon-btn absolute right-1 top-1/2 -translate-y-1/2"
+                    aria-label="Tampilkan password"
+                  >
+                    <i data-lucide="eye" class="w-5 h-5"></i>
+                  </button>
+                </div>
+                <p class="field-error" data-err="password"></p>
+              </div>
+              <p
+                id="loginError"
+                class="hidden text-sm text-red-600 dark:text-red-400"
+                role="alert"
+              ></p>
+              <button id="btnLogin" type="submit" class="btn-primary w-full">
+                <span class="btn-label">Masuk</span>
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- ---------- BERANDA / DASHBOARD ---------- -->
+        <section id="view-home" data-view="home" class="view hidden space-y-5">
+          <div class="flex items-end justify-between gap-3">
+            <div class="min-w-0">
+              <p class="text-sm text-slate-500 dark:text-slate-400">
+                Selamat datang,
+              </p>
+              <h2 id="homeName" class="text-lg font-bold truncate"></h2>
+            </div>
+            <button id="btnHomeRefresh" type="button" class="btn-ghost">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i
+              ><span>Muat ulang</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="stat-card">
+              <p class="stat-label">Total aset</p>
+              <p id="statTotal" class="stat-value">-</p>
+            </div>
+            <div class="stat-card">
+              <p class="stat-label">Nilai perolehan</p>
+              <p id="statValue" class="stat-value text-base sm:text-xl">-</p>
+            </div>
+            <div class="stat-card">
+              <p class="stat-label">Rusak (ringan/berat)</p>
+              <p
+                id="statRusak"
+                class="stat-value text-amber-600 dark:text-amber-400"
+              >
+                -
+              </p>
+            </div>
+            <div class="stat-card">
+              <p class="stat-label">Garansi &lt; 60 hari</p>
+              <p
+                id="statGaransi"
+                class="stat-value text-sky-600 dark:text-sky-400"
+              >
+                -
+              </p>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-3 gap-4">
+            <div class="card">
+              <h3 class="card-title">Per kategori</h3>
+              <div id="chartKategori" class="space-y-3"></div>
+            </div>
+            <div class="card">
+              <h3 class="card-title">Per kondisi</h3>
+              <div id="chartKondisi" class="space-y-3"></div>
+            </div>
+            <div class="card">
+              <h3 class="card-title">Per lokasi</h3>
+              <div id="chartLokasi" class="space-y-3"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Perlu perhatian</h3>
+            <ul
+              id="alertList"
+              class="divide-y divide-slate-200 dark:divide-slate-800"
+            ></ul>
+          </div>
+        </section>
+
+        <!-- ---------- DAFTAR ASET ---------- -->
+        <section id="view-list" data-view="list" class="view hidden space-y-4">
+          <div class="flex items-center gap-2">
+            <div class="relative flex-1">
+              <i
+                data-lucide="search"
+                class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              ></i>
+              <input
+                id="searchInput"
+                type="search"
+                placeholder="Cari kode, nama, merek, serial, lokasi..."
+                maxlength="100"
+                autocomplete="off"
+                class="input pl-9"
+              />
+            </div>
+            <button
+              id="btnFilterToggle"
+              type="button"
+              class="btn-secondary px-3"
+              aria-expanded="false"
+              aria-controls="filterPanel"
+            >
+              <i data-lucide="sliders-horizontal" class="w-4 h-4"></i
+              ><span class="hidden sm:inline">Filter</span>
+            </button>
+          </div>
+
+          <div
+            id="filterPanel"
+            class="hidden card grid grid-cols-2 lg:grid-cols-5 gap-3"
+          >
+            <div>
+              <label for="filterKategori" class="label">Kategori</label>
+              <select id="filterKategori" class="input">
+                <option value="">Semua</option>
+              </select>
+            </div>
+            <div>
+              <label for="filterLokasi" class="label">Lokasi</label>
+              <select id="filterLokasi" class="input">
+                <option value="">Semua</option>
+              </select>
+            </div>
+            <div>
+              <label for="filterKondisi" class="label">Kondisi</label>
+              <select id="filterKondisi" class="input">
+                <option value="">Semua</option>
+              </select>
+            </div>
+            <div>
+              <label for="filterStatus" class="label">Status</label>
+              <select id="filterStatus" class="input">
+                <option value="">Semua</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2 items-end">
+              <div>
+                <label for="sortBy" class="label">Urutkan</label>
+                <select id="sortBy" class="input">
+                  <option value="updated_at">Terakhir diubah</option>
+                  <option value="kode_aset">Kode aset</option>
+                  <option value="nama_aset">Nama</option>
+                  <option value="kategori">Kategori</option>
+                  <option value="lokasi">Lokasi</option>
+                  <option value="harga_perolehan">Harga</option>
+                  <option value="garansi_sampai">Garansi</option>
+                </select>
+              </div>
+              <div>
+                <label for="sortDir" class="sr-only">Arah urutan</label>
+                <select id="sortDir" class="input">
+                  <option value="desc">Turun</option>
+                  <option value="asc">Naik</option>
+                </select>
+              </div>
+            </div>
+            <label
+              id="filterDeletedWrap"
+              class="hidden lg:col-span-5 flex items-center gap-2 text-sm"
+            >
+              <input
+                id="filterDeleted"
+                type="checkbox"
+                class="w-4 h-4 rounded accent-brand-600"
+              />
+              Tampilkan aset yang dihapus (Admin)
+            </label>
+            <div class="lg:col-span-5 flex justify-end">
+              <button id="btnFilterReset" type="button" class="btn-ghost">
+                Reset filter
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-sm">
+            <p id="listCount" class="text-slate-500 dark:text-slate-400"></p>
+            <button id="btnSelectMode" type="button" class="btn-ghost">
+              <i data-lucide="check-square" class="w-4 h-4"></i
+              ><span>Pilih untuk label</span>
+            </button>
+          </div>
+
+          <div
+            id="listSelectBar"
+            class="hidden sticky top-16 z-20 card flex items-center justify-between gap-2 !py-3"
+          >
+            <p class="text-sm"><span id="selectCount">0</span> aset dipilih</p>
+            <div class="flex gap-2">
+              <button id="btnSelectCancel" type="button" class="btn-ghost">
+                Batal
+              </button>
+              <button
+                id="btnLabelSelected"
+                type="button"
+                class="btn-primary !py-2"
+              >
+                <i data-lucide="printer" class="w-4 h-4"></i
+                ><span>Buat label</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="assetListSkeleton" class="space-y-3" aria-hidden="true">
+            <div class="skeleton h-20"></div>
+            <div class="skeleton h-20"></div>
+            <div class="skeleton h-20"></div>
+          </div>
+
+          <ul id="assetList" class="hidden space-y-3"></ul>
+
+          <div id="emptyList" class="hidden text-center py-12">
+            <i data-lucide="inbox" class="w-10 h-10 mx-auto text-slate-400"></i>
+            <p class="mt-2 font-medium">Belum ada aset</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              Coba ubah filter atau tambah aset baru.
+            </p>
+          </div>
+
+          <nav
+            id="pagination"
+            class="hidden flex items-center justify-between gap-2 pt-2"
+            aria-label="Halaman"
+          >
+            <button id="btnPrev" type="button" class="btn-secondary">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i
+              ><span>Sebelumnya</span>
+            </button>
+            <p
+              id="pageInfo"
+              class="text-sm text-slate-500 dark:text-slate-400"
+            ></p>
+            <button id="btnNext" type="button" class="btn-secondary">
+              <span>Berikutnya</span
+              ><i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </nav>
+        </section>
+
+        <!-- ---------- FORM TAMBAH / EDIT ---------- -->
+        <section id="view-form" data-view="form" class="view hidden">
+          <div class="flex items-center gap-2 mb-4">
+            <button
+              id="btnFormBack"
+              type="button"
+              class="icon-btn"
+              aria-label="Kembali"
+            >
+              <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </button>
+            <div class="min-w-0">
+              <h2 id="formTitle" class="text-lg font-bold truncate">
+                Tambah aset
+              </h2>
+              <p
+                id="formSubtitle"
+                class="text-sm text-slate-500 dark:text-slate-400"
+              ></p>
+            </div>
+          </div>
+
+          <form id="formAsset" novalidate class="space-y-5">
+            <input type="hidden" id="fUpdatedAt" name="updated_at" />
+
+            <!-- Kode aset: diisi otomatis (manual) atau dari hasil scan (kode belum terdaftar) -->
+            <div class="card space-y-4">
+              <h3 class="card-title">Identitas</h3>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="fKodeAset" class="label">Kode aset</label>
+                  <div class="flex gap-2">
+                    <input
+                      id="fKodeAset"
+                      name="kode_aset"
+                      type="text"
+                      maxlength="40"
+                      autocapitalize="characters"
+                      spellcheck="false"
+                      class="input font-mono"
+                      placeholder="Dibuat otomatis"
+                      readonly
+                    />
+                    <button
+                      id="btnFormScanKode"
+                      type="button"
+                      class="btn-secondary px-3"
+                      aria-label="Scan QR untuk kode aset"
+                    >
+                      <i data-lucide="scan-line" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                  <p class="help">
+                    Kode dibuat otomatis oleh sistem bila kosong.
+                  </p>
+                </div>
+                <div>
+                  <label for="fNama" class="label"
+                    >Nama aset <span class="req">*</span></label
+                  >
+                  <input
+                    id="fNama"
+                    name="nama_aset"
+                    type="text"
+                    maxlength="150"
+                    class="input"
+                    required
+                  />
+                  <p class="field-error" data-err="nama_aset"></p>
+                </div>
+                <div>
+                  <label for="fKategori" class="label"
+                    >Kategori <span class="req">*</span></label
+                  >
+                  <select
+                    id="fKategori"
+                    name="kategori"
+                    class="input"
+                    required
+                  ></select>
+                  <p class="field-error" data-err="kategori"></p>
+                </div>
+                <div>
+                  <label for="fSerial" class="label">Serial number</label>
+                  <input
+                    id="fSerial"
+                    name="serial_number"
+                    type="text"
+                    maxlength="80"
+                    spellcheck="false"
+                    class="input"
+                  />
+                  <p class="field-error" data-err="serial_number"></p>
+                </div>
+                <div>
+                  <label for="fMerek" class="label">Merek</label>
+                  <input
+                    id="fMerek"
+                    name="merek"
+                    type="text"
+                    maxlength="80"
+                    class="input"
+                  />
+                </div>
+                <div>
+                  <label for="fModel" class="label">Model / tipe</label>
+                  <input
+                    id="fModel"
+                    name="model"
+                    type="text"
+                    maxlength="80"
+                    class="input"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="card space-y-4">
+              <h3 class="card-title">Penempatan & penanggung jawab</h3>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="fLokasi" class="label"
+                    >Lokasi <span class="req">*</span></label
+                  >
+                  <select
+                    id="fLokasi"
+                    name="lokasi"
+                    class="input"
+                    required
+                  ></select>
+                  <p class="field-error" data-err="lokasi"></p>
+                </div>
+                <div>
+                  <label for="fPenanggungJawab" class="label"
+                    >Penanggung jawab</label
+                  >
+                  <input
+                    id="fPenanggungJawab"
+                    name="penanggung_jawab"
+                    type="text"
+                    maxlength="100"
+                    class="input"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="card space-y-4">
+              <h3 class="card-title">Perolehan & garansi</h3>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="fTanggalPerolehan" class="label"
+                    >Tanggal perolehan</label
+                  >
+                  <input
+                    id="fTanggalPerolehan"
+                    name="tanggal_perolehan"
+                    type="date"
+                    class="input"
+                  />
+                  <p class="field-error" data-err="tanggal_perolehan"></p>
+                </div>
+                <div>
+                  <label for="fHarga" class="label">Harga perolehan (Rp)</label>
+                  <input
+                    id="fHarga"
+                    name="harga_perolehan"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="20"
+                    placeholder="0"
+                    class="input"
+                  />
+                  <p class="field-error" data-err="harga_perolehan"></p>
+                </div>
+                <div>
+                  <label for="fGaransi" class="label">Garansi sampai</label>
+                  <input
+                    id="fGaransi"
+                    name="garansi_sampai"
+                    type="date"
+                    class="input"
+                  />
+                  <p class="field-error" data-err="garansi_sampai"></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="card space-y-4">
+              <h3 class="card-title">Kondisi & status</h3>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="fKondisi" class="label"
+                    >Kondisi <span class="req">*</span></label
+                  >
+                  <select
+                    id="fKondisi"
+                    name="kondisi"
+                    class="input"
+                    required
+                  ></select>
+                  <p class="field-error" data-err="kondisi"></p>
+                </div>
+                <div>
+                  <label for="fStatus" class="label"
+                    >Status <span class="req">*</span></label
+                  >
+                  <select
+                    id="fStatus"
+                    name="status"
+                    class="input"
+                    required
+                  ></select>
+                  <p class="field-error" data-err="status"></p>
+                </div>
+              </div>
+              <div>
+                <label for="fKeterangan" class="label">Keterangan</label>
+                <textarea
+                  id="fKeterangan"
+                  name="keterangan"
+                  rows="3"
+                  maxlength="500"
+                  class="input"
+                ></textarea>
+                <p class="help"><span id="fKeteranganCount">0</span>/500</p>
+              </div>
+            </div>
+
+            <p
+              id="formError"
+              class="hidden text-sm text-red-600 dark:text-red-400"
+              role="alert"
+            ></p>
+
+            <div
+              class="flex flex-col-reverse sm:flex-row sm:justify-between gap-3"
+            >
+              <button
+                id="btnDeleteAsset"
+                type="button"
+                class="btn-danger hidden"
+              >
+                <i data-lucide="trash-2" class="w-4 h-4"></i
+                ><span>Hapus aset</span>
+              </button>
+              <div class="flex flex-col-reverse sm:flex-row gap-3 sm:ml-auto">
+                <button id="btnFormCancel" type="button" class="btn-secondary">
+                  Batal
+                </button>
+                <button id="btnSaveAsset" type="submit" class="btn-primary">
+                  <span class="btn-label">Simpan</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <!-- ---------- DETAIL ASET ---------- -->
+        <section
+          id="view-detail"
+          data-view="detail"
+          class="view hidden space-y-4"
+        >
+          <div class="flex items-center gap-2">
+            <button
+              id="btnDetailBack"
+              type="button"
+              class="icon-btn"
+              aria-label="Kembali"
+            >
+              <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </button>
+            <div class="min-w-0 flex-1">
+              <p
+                id="detailKode"
+                class="font-mono text-xs text-slate-500 dark:text-slate-400"
+              ></p>
+              <h2 id="detailNama" class="text-lg font-bold truncate"></h2>
+            </div>
+            <span id="detailDeletedBadge" class="hidden badge badge-danger"
+              >Dihapus</span
+            >
+          </div>
+
+          <div class="grid md:grid-cols-5 gap-4">
+            <!-- Foto utama -->
+            <div class="card md:col-span-2 !p-3">
+              <div
+                class="aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 grid place-items-center"
+              >
+                <img
+                  id="detailFoto"
+                  alt="Foto aset"
+                  class="hidden w-full h-full object-cover"
+                />
+                <div id="detailFotoEmpty" class="text-center text-slate-400">
+                  <i data-lucide="image" class="w-10 h-10 mx-auto"></i>
+                  <p class="text-sm mt-1">Belum ada foto</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2 mt-3">
+                <button
+                  id="btnFotoKamera"
+                  type="button"
+                  class="btn-secondary !px-2"
+                >
+                  <i data-lucide="camera" class="w-4 h-4"></i
+                  ><span>Kamera</span>
+                </button>
+                <button
+                  id="btnFotoGaleri"
+                  type="button"
+                  class="btn-secondary !px-2"
+                >
+                  <i data-lucide="image" class="w-4 h-4"></i><span>Galeri</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Info -->
+            <div class="card md:col-span-3 space-y-4">
+              <div class="flex flex-wrap gap-2">
+                <span id="detailKondisi" class="badge badge-neutral"></span>
+                <span id="detailStatus" class="badge badge-neutral"></span>
+                <span
+                  id="detailGaransi"
+                  class="badge badge-neutral hidden"
+                ></span>
+              </div>
+              <dl
+                id="detailInfo"
+                class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm"
+              ></dl>
+              <div
+                class="flex flex-wrap gap-2 pt-2 border-t border-slate-200 dark:border-slate-800"
+              >
+                <button id="btnEdit" type="button" class="btn-primary !py-2">
+                  <i data-lucide="pencil" class="w-4 h-4"></i><span>Edit</span>
+                </button>
+                <button
+                  id="btnShowQr"
+                  type="button"
+                  class="btn-secondary !py-2"
+                >
+                  <i data-lucide="qr-code" class="w-4 h-4"></i
+                  ><span>Lihat QR</span>
+                </button>
+                <button
+                  id="btnRestore"
+                  type="button"
+                  class="btn-secondary !py-2 hidden"
+                >
+                  <i data-lucide="rotate-ccw" class="w-4 h-4"></i
+                  ><span>Pulihkan</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="card-title">Dokumen pendukung</h3>
+              <button id="btnAddDoc" type="button" class="btn-secondary !py-2">
+                <i data-lucide="plus" class="w-4 h-4"></i><span>Tambah</span>
+              </button>
+            </div>
+            <ul
+              id="docList"
+              class="divide-y divide-slate-200 dark:divide-slate-800"
+            ></ul>
+            <p
+              id="docEmpty"
+              class="hidden text-sm text-slate-500 dark:text-slate-400"
+            >
+              Belum ada dokumen.
+            </p>
+          </div>
+        </section>
+
+        <!-- ---------- CETAK LABEL ---------- -->
+        <section
+          id="view-label"
+          data-view="label"
+          class="view hidden space-y-4"
+        >
+          <div>
+            <h2 class="text-lg font-bold">Cetak label QR</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              Satu kode aset per baris. Label dicetak 12 per halaman A4.
+            </p>
+          </div>
+          <div class="card space-y-3">
+            <label for="labelInput" class="label">Daftar kode aset</label>
+            <textarea
+              id="labelInput"
+              rows="6"
+              spellcheck="false"
+              autocapitalize="characters"
+              class="input font-mono"
+              placeholder="AST-2026-0001&#10;AST-2026-0002"
+            ></textarea>
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <p
+                id="labelCount"
+                class="text-sm text-slate-500 dark:text-slate-400"
+              >
+                0 label
+              </p>
+              <div class="flex gap-2">
+                <button
+                  id="btnLabelGenerate"
+                  type="button"
+                  class="btn-secondary"
+                >
+                  <i data-lucide="eye" class="w-4 h-4"></i
+                  ><span>Pratinjau</span>
+                </button>
+                <button id="btnLabelPrint" type="button" class="btn-primary">
+                  <i data-lucide="printer" class="w-4 h-4"></i
+                  ><span>Cetak</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            id="labelPreview"
+            class="grid grid-cols-2 sm:grid-cols-3 gap-3"
+          ></div>
+        </section>
+
+        <!-- ---------- AKUN ---------- -->
+        <section
+          id="view-account"
+          data-view="account"
+          class="view hidden space-y-5"
+        >
+          <div>
+            <h2 class="text-lg font-bold">Akun</h2>
+            <p
+              id="accountInfo"
+              class="text-sm text-slate-500 dark:text-slate-400"
+            ></p>
+          </div>
+
+          <form id="formPassword" novalidate class="card space-y-4">
+            <h3 class="card-title">Ganti password</h3>
+            <div>
+              <label for="pwOld" class="label">Password lama</label>
+              <input
+                id="pwOld"
+                name="oldPassword"
+                type="password"
+                autocomplete="current-password"
+                maxlength="128"
+                class="input"
+              />
+              <p class="field-error" data-err="oldPassword"></p>
+            </div>
+            <div>
+              <label for="pwNew" class="label">Password baru</label>
+              <input
+                id="pwNew"
+                name="newPassword"
+                type="password"
+                autocomplete="new-password"
+                maxlength="128"
+                class="input"
+              />
+              <p class="help">Minimal 8 karakter, memuat huruf dan angka.</p>
+              <p class="field-error" data-err="newPassword"></p>
+            </div>
+            <div>
+              <label for="pwConfirm" class="label">Ulangi password baru</label>
+              <input
+                id="pwConfirm"
+                name="confirmPassword"
+                type="password"
+                autocomplete="new-password"
+                maxlength="128"
+                class="input"
+              />
+              <p class="field-error" data-err="confirmPassword"></p>
+            </div>
+            <button
+              id="btnChangePassword"
+              type="submit"
+              class="btn-primary w-full sm:w-auto"
+            >
+              <span class="btn-label">Simpan password</span>
+            </button>
+          </form>
+
+          <!-- Khusus Admin -->
+          <div id="adminSection" class="hidden space-y-5">
+            <form id="formCreateUser" novalidate class="card space-y-4">
+              <h3 class="card-title">Tambah pengguna</h3>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="newUsername" class="label">Username</label>
+                  <input
+                    id="newUsername"
+                    name="username"
+                    type="text"
+                    maxlength="30"
+                    autocapitalize="none"
+                    spellcheck="false"
+                    class="input"
+                  />
+                  <p class="field-error" data-err="username"></p>
+                </div>
+                <div>
+                  <label for="newNama" class="label">Nama lengkap</label>
+                  <input
+                    id="newNama"
+                    name="nama"
+                    type="text"
+                    maxlength="100"
+                    class="input"
+                  />
+                  <p class="field-error" data-err="nama"></p>
+                </div>
+                <div>
+                  <label for="newRole" class="label">Peran</label>
+                  <select id="newRole" name="role" class="input">
+                    <option value="Viewer">Viewer (hanya lihat)</option>
+                    <option value="Operator">Operator (tambah & ubah)</option>
+                    <option value="Admin">Admin (penuh)</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="newPassword" class="label">Password awal</label>
+                  <input
+                    id="newPassword"
+                    name="password"
+                    type="password"
+                    autocomplete="new-password"
+                    maxlength="128"
+                    class="input"
+                  />
+                  <p class="field-error" data-err="password"></p>
+                </div>
+              </div>
+              <button
+                id="btnCreateUser"
+                type="submit"
+                class="btn-primary w-full sm:w-auto"
+              >
+                <span class="btn-label">Buat pengguna</span>
+              </button>
+            </form>
+
+            <div class="card space-y-4">
+              <div class="flex flex-wrap items-end justify-between gap-3">
+                <h3 class="card-title">Riwayat perubahan</h3>
+                <div class="flex gap-2 items-end">
+                  <div>
+                    <label for="auditKode" class="label"
+                      >Filter kode aset</label
+                    >
+                    <input
+                      id="auditKode"
+                      type="text"
+                      maxlength="40"
+                      autocapitalize="characters"
+                      spellcheck="false"
+                      class="input font-mono"
+                      placeholder="Semua"
+                    />
+                  </div>
+                  <button id="btnAuditLoad" type="button" class="btn-secondary">
+                    Muat
+                  </button>
+                </div>
+              </div>
+              <ol id="auditList" class="space-y-3 text-sm"></ol>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- ========================= NAVIGASI BAWAH ========================= -->
+      <nav
+        id="bottomNav"
+        class="hidden fixed bottom-0 inset-x-0 z-30 safe-bottom bg-white/95 dark:bg-slate-900/95 backdrop-blur border-t border-slate-200 dark:border-slate-800"
+      >
+        <div class="grid grid-cols-5 max-w-md mx-auto h-16 items-center px-2">
+          <button type="button" class="nav-item" data-nav="home">
+            <i data-lucide="home" class="w-5 h-5"></i><span>Beranda</span>
+          </button>
+          <button type="button" class="nav-item" data-nav="list">
+            <i data-lucide="package" class="w-5 h-5"></i><span>Aset</span>
+          </button>
+          <div class="flex justify-center">
+            <button
+              id="btnScan"
+              type="button"
+              class="nav-fab"
+              aria-label="Scan QR"
+            >
+              <i data-lucide="scan-line" class="w-6 h-6"></i>
+            </button>
+          </div>
+          <button type="button" class="nav-item" data-nav="label">
+            <i data-lucide="printer" class="w-5 h-5"></i><span>Label</span>
+          </button>
+          <button type="button" class="nav-item" data-nav="account">
+            <i data-lucide="user" class="w-5 h-5"></i><span>Akun</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Tombol tambah aset (layar lebar) -->
+      <button
+        id="btnAddAsset"
+        type="button"
+        class="hidden fixed right-4 bottom-24 z-30 btn-primary !rounded-full !px-4 shadow-xl shadow-brand-600/30"
+        aria-label="Tambah aset"
+      >
+        <i data-lucide="plus" class="w-5 h-5"></i><span>Tambah aset</span>
+      </button>
+
+      <!-- ========================= MODAL ========================= -->
+
+      <!-- Scanner QR -->
+      <div
+        id="scanModal"
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="scanTitle"
+      >
+        <div class="modal-panel">
+          <div class="flex items-center justify-between mb-3">
+            <h3 id="scanTitle" class="text-lg font-bold">Scan QR aset</h3>
+            <button
+              id="btnScanClose"
+              type="button"
+              class="icon-btn"
+              aria-label="Tutup"
+            >
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <div class="relative">
+            <div id="qrReader"></div>
+            <div class="scan-frame" aria-hidden="true"></div>
+          </div>
+          <p
+            id="scanStatus"
+            class="text-sm text-center text-slate-500 dark:text-slate-400 mt-3"
+            aria-live="polite"
+          >
+            Arahkan kamera ke QR code
+          </p>
+          <div class="flex gap-2 mt-4">
+            <button
+              id="btnScanSwitch"
+              type="button"
+              class="btn-secondary flex-1 hidden"
+            >
+              <i data-lucide="switch-camera" class="w-4 h-4"></i
+              ><span>Ganti kamera</span>
+            </button>
+            <button
+              id="btnScanTorch"
+              type="button"
+              class="btn-secondary flex-1 hidden"
+            >
+              <i data-lucide="flashlight" class="w-4 h-4"></i
+              ><span>Senter</span>
+            </button>
+          </div>
+          <!-- Fallback input manual, tampil bila kamera ditolak atau tidak tersedia -->
+          <form
+            id="formManualKode"
+            novalidate
+            class="hidden mt-4 space-y-2 border-t border-slate-200 dark:border-slate-800 pt-4"
+          >
+            <label for="manualKode" class="label"
+              >Masukkan kode aset manual</label
+            >
+            <div class="flex gap-2">
+              <input
+                id="manualKode"
+                type="text"
+                maxlength="40"
+                autocapitalize="characters"
+                spellcheck="false"
+                placeholder="AST-2026-0001"
+                class="input font-mono"
+              />
+              <button type="submit" class="btn-primary">Cari</button>
+            </div>
+            <p class="field-error" data-err="manualKode"></p>
+          </form>
+        </div>
+      </div>
+
+      <!-- Pratinjau & unduh QR -->
+      <div
+        id="qrModal"
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="qrTitle"
+      >
+        <div class="modal-panel text-center">
+          <div class="flex items-center justify-between mb-2 text-left">
+            <h3 id="qrTitle" class="text-lg font-bold">QR aset</h3>
+            <button
+              id="btnQrClose"
+              type="button"
+              class="icon-btn"
+              aria-label="Tutup"
+            >
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <p
+            id="qrNama"
+            class="text-sm text-slate-500 dark:text-slate-400 truncate"
+          ></p>
+          <div class="my-4 inline-block rounded-2xl bg-white p-4">
+            <div id="qrCanvas" class="mx-auto"></div>
+          </div>
+          <p id="qrKode" class="font-mono text-lg font-bold tracking-wide"></p>
+          <div class="grid grid-cols-2 gap-2 mt-5">
+            <button id="btnQrDownload" type="button" class="btn-secondary">
+              <i data-lucide="download" class="w-4 h-4"></i
+              ><span>Unduh PNG</span>
+            </button>
+            <button id="btnQrPrint" type="button" class="btn-primary">
+              <i data-lucide="printer" class="w-4 h-4"></i
+              ><span>Cetak label</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unggah dokumen / foto -->
+      <div
+        id="uploadModal"
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="uploadTitle"
+      >
+        <div class="modal-panel">
+          <div class="flex items-center justify-between mb-4">
+            <h3 id="uploadTitle" class="text-lg font-bold">Unggah berkas</h3>
+            <button
+              id="btnUploadClose"
+              type="button"
+              class="icon-btn"
+              aria-label="Tutup"
+            >
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <form id="formUpload" novalidate class="space-y-4">
+            <div>
+              <label for="uploadJenis" class="label">Jenis dokumen</label>
+              <select id="uploadJenis" class="input">
+                <option value="Foto">Foto aset</option>
+                <option value="Nota">Nota / faktur</option>
+                <option value="Garansi">Kartu garansi</option>
+                <option value="Manual">Manual / panduan</option>
+                <option value="BAST">BAST</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+            <div>
+              <label for="uploadNama" class="label">Nama dokumen</label>
+              <input
+                id="uploadNama"
+                type="text"
+                maxlength="80"
+                placeholder="Contoh: Nota pembelian Maret"
+                class="input"
+              />
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="btnUploadCamera" type="button" class="btn-secondary">
+                <i data-lucide="camera" class="w-4 h-4"></i><span>Kamera</span>
+              </button>
+              <button id="btnUploadFile" type="button" class="btn-secondary">
+                <i data-lucide="file" class="w-4 h-4"></i
+                ><span>Pilih berkas</span>
+              </button>
+            </div>
+            <input
+              id="inputUploadCamera"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              class="hidden"
+            />
+            <input
+              id="inputUploadFile"
+              type="file"
+              accept="image/*,application/pdf"
+              class="hidden"
+            />
+            <div
+              id="uploadPreviewWrap"
+              class="hidden rounded-xl border border-slate-200 dark:border-slate-700 p-2"
+            >
+              <img
+                id="uploadPreview"
+                alt="Pratinjau berkas"
+                class="hidden max-h-56 mx-auto rounded-lg"
+              />
+              <p
+                id="uploadFileInfo"
+                class="text-sm text-center text-slate-500 dark:text-slate-400"
+              ></p>
+            </div>
+            <div id="uploadProgressWrap" class="hidden">
+              <div
+                class="h-2 w-full rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden"
+              >
+                <div
+                  id="uploadProgress"
+                  class="h-full w-0 bg-brand-600 transition-all"
+                ></div>
+              </div>
+              <p
+                id="uploadProgressText"
+                class="text-xs text-slate-500 mt-1"
+              ></p>
+            </div>
+            <p
+              id="uploadError"
+              class="hidden text-sm text-red-600 dark:text-red-400"
+              role="alert"
+            ></p>
+            <button
+              id="btnUploadSubmit"
+              type="submit"
+              class="btn-primary w-full"
+              disabled
+            >
+              <span class="btn-label">Unggah</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Konfirmasi -->
+      <div
+        id="confirmModal"
+        class="modal"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="confirmTitle"
+      >
+        <div class="modal-panel">
+          <h3 id="confirmTitle" class="text-lg font-bold">Konfirmasi</h3>
+          <p
+            id="confirmMessage"
+            class="text-sm text-slate-600 dark:text-slate-300 mt-2"
+          ></p>
+          <div class="grid grid-cols-2 gap-2 mt-6">
+            <button id="btnConfirmCancel" type="button" class="btn-secondary">
+              Batal
+            </button>
+            <button id="btnConfirmOk" type="button" class="btn-primary">
+              Ya, lanjutkan
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading global -->
+      <div
+        id="loadingOverlay"
+        class="hidden fixed inset-0 z-[70] bg-slate-900/40 grid place-items-center"
+        aria-live="assertive"
+      >
+        <div
+          class="flex items-center gap-3 rounded-2xl bg-white dark:bg-slate-900 px-5 py-4 shadow-xl"
+        >
+          <span class="spinner text-brand-600" aria-hidden="true"></span>
+          <span id="loadingText" class="text-sm font-medium">Memproses...</span>
+        </div>
+      </div>
+
+      <!-- Notifikasi toast -->
+      <div id="toastRoot" aria-live="polite"></div>
+    </div>
+
+    <!-- Area cetak (tersembunyi di layar, hanya tampil saat print) -->
+    <div id="printArea" aria-hidden="true"></div>
+
+    <!-- Script aplikasi: urutan dijaga oleh atribut defer -->
+    <script src="js/config.js" defer></script>
+    <script src="js/api.js" defer></script>
+    <script src="js/upload.js" defer></script>
+    <script src="js/qr.js" defer></script>
+    <script src="js/scanner.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </body>
+</html>

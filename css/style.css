@@ -1,0 +1,493 @@
+/* ==========================================================
+   style.css: gaya tambahan di luar Tailwind CDN
+   Catatan: Tailwind Play CDN tidak memproses @apply pada berkas
+   CSS eksternal, jadi seluruh aturan di sini ditulis sebagai CSS biasa.
+   ========================================================== */
+
+html, body { -webkit-tap-highlight-color: transparent; }
+
+/* Cegah zoom otomatis di iOS saat input difokus */
+input, select, textarea { font-size: 16px; }
+
+/* Area aman perangkat (notch, home indicator) */
+.safe-top { padding-top: env(safe-area-inset-top, 0px); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ---------- Komponen dasar ---------- */
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+html.dark .card {
+  background: #0f172a;
+  border-color: #1e293b;
+}
+.card-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+html.dark .card-title { color: #f1f5f9; }
+
+.label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #334155;
+}
+html.dark .label { color: #cbd5e1; }
+.label .req { color: #dc2626; }
+
+.help {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+html.dark .help { color: #94a3b8; }
+
+.input {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input::placeholder { color: #94a3b8; }
+.input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+.input[readonly] { background: #f8fafc; color: #475569; }
+.input:disabled { opacity: 0.6; cursor: not-allowed; }
+html.dark .input {
+  background: #020617;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+html.dark .input[readonly] { background: #0f172a; color: #94a3b8; }
+html.dark .input::placeholder { color: #64748b; }
+html.dark .input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+.input.is-invalid { border-color: #dc2626 !important; }
+
+select.input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.field-error {
+  display: none;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #dc2626;
+}
+.field-error:not(:empty) { display: block; }
+html.dark .field-error { color: #f87171; }
+
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s, transform 0.1s, opacity 0.15s;
+  border: 1px solid transparent;
+}
+.btn-primary:active,
+.btn-secondary:active,
+.btn-danger:active,
+.btn-ghost:active { transform: scale(0.98); }
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-danger:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.btn-primary { background: #2563eb; color: #ffffff; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
+.btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+
+.btn-secondary {
+  background: #ffffff;
+  color: #1e293b;
+  border-color: #cbd5e1;
+}
+.btn-secondary:hover:not(:disabled) { background: #f8fafc; }
+html.dark .btn-secondary { background: #0f172a; color: #e2e8f0; border-color: #334155; }
+html.dark .btn-secondary:hover:not(:disabled) { background: #1e293b; }
+
+.btn-danger { background: #dc2626; color: #ffffff; }
+.btn-danger:hover:not(:disabled) { background: #b91c1c; }
+
+.btn-ghost { background: transparent; color: #2563eb; padding: 8px 12px; min-height: 40px; }
+.btn-ghost:hover { background: rgba(37, 99, 235, 0.08); }
+html.dark .btn-ghost { color: #60a5fa; }
+
+/* Tombol berisi spinner saat loading */
+.btn-primary.is-loading,
+.btn-secondary.is-loading { pointer-events: none; opacity: 0.85; }
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s, transform 0.1s;
+}
+.icon-btn:hover { background: rgba(100, 116, 139, 0.12); }
+.icon-btn:active { transform: scale(0.94); }
+
+.stat-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+html.dark .stat-card { background: #0f172a; border-color: #1e293b; }
+.stat-label { font-size: 0.75rem; color: #64748b; }
+html.dark .stat-label { color: #94a3b8; }
+.stat-value { margin-top: 4px; font-size: 1.25rem; font-weight: 700; word-break: break-word; }
+
+/* ---------- Badge ---------- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  white-space: nowrap;
+}
+.badge-success { background: #dcfce7; color: #166534; }
+.badge-warning { background: #fef9c3; color: #854d0e; }
+.badge-danger  { background: #fee2e2; color: #991b1b; }
+.badge-info    { background: #dbeafe; color: #1e40af; }
+.badge-neutral { background: #e2e8f0; color: #334155; }
+html.dark .badge-success { background: rgba(22, 163, 74, 0.2); color: #86efac; }
+html.dark .badge-warning { background: rgba(202, 138, 4, 0.2); color: #fde047; }
+html.dark .badge-danger  { background: rgba(220, 38, 38, 0.22); color: #fca5a5; }
+html.dark .badge-info    { background: rgba(37, 99, 235, 0.22); color: #93c5fd; }
+html.dark .badge-neutral { background: #1e293b; color: #cbd5e1; }
+
+/* ---------- Navigasi bawah ---------- */
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 52px;
+  padding: 4px 0;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: #64748b;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.nav-item.is-active { color: #2563eb; }
+html.dark .nav-item { color: #94a3b8; }
+html.dark .nav-item.is-active { color: #60a5fa; }
+
+.nav-fab {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin-top: -26px;
+  border: 4px solid #f1f5f9;
+  border-radius: 9999px;
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.nav-fab:active { transform: scale(0.94); }
+html.dark .nav-fab { border-color: #020617; }
+
+/* ---------- Modal (bottom sheet di HP, dialog di layar lebar) ---------- */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.55);
+}
+.modal.is-open { display: flex; }
+
+.modal-panel {
+  width: 100%;
+  max-height: 92vh;
+  max-height: 92dvh;
+  overflow-y: auto;
+  padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+  background: #ffffff;
+  border-radius: 20px 20px 0 0;
+  animation: sheet-up 0.22s ease-out;
+}
+html.dark .modal-panel { background: #0f172a; }
+
+@media (min-width: 640px) {
+  .modal { align-items: center; padding: 16px; }
+  .modal-panel { max-width: 520px; border-radius: 20px; }
+}
+
+@keyframes sheet-up {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+/* ---------- Scanner QR ---------- */
+
+#qrReader {
+  width: 100%;
+  min-height: 240px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #0f172a;
+}
+#qrReader video {
+  width: 100% !important;
+  height: auto !important;
+  object-fit: cover;
+}
+/* Sembunyikan panel bawaan html5-qrcode; kontrol disediakan di modal */
+#qrReader__dashboard,
+#qrReader__header_message { display: none !important; }
+
+.scan-frame {
+  position: absolute;
+  inset: 14% 12%;
+  border: 2px solid #22c55e;
+  border-radius: 16px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+.scan-frame::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  top: 0;
+  background: rgba(34, 197, 94, 0.85);
+  animation: scan-line 2s ease-in-out infinite;
+}
+.relative > #qrReader { position: relative; }
+@keyframes scan-line {
+  0%, 100% { top: 6%; }
+  50%      { top: 92%; }
+}
+
+/* ---------- Toast ---------- */
+
+#toastRoot {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  pointer-events: none;
+}
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  max-width: 480px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  color: #ffffff;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+  pointer-events: auto;
+  animation: toast-in 0.2s ease-out;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.toast.is-leaving { opacity: 0; transform: translateY(8px); }
+.toast-success { background: #059669; }
+.toast-error   { background: #dc2626; }
+.toast-info    { background: #0f172a; }
+.toast-warning { background: #d97706; }
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- Loading & skeleton ---------- */
+
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  vertical-align: -4px;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.skeleton {
+  border-radius: 16px;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 37%, #e2e8f0 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+html.dark .skeleton {
+  background: linear-gradient(90deg, #1e293b 25%, #334155 37%, #1e293b 63%);
+  background-size: 400% 100%;
+}
+@keyframes shimmer {
+  0%   { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* ---------- Area cetak label ---------- */
+
+#printArea { display: none; }
+
+@media print {
+  @page { size: A4; margin: 10mm; }
+
+  body * { visibility: hidden !important; }
+  #printArea,
+  #printArea * { visibility: visible !important; }
+
+  #printArea {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #ffffff;
+  }
+
+  .print-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* 3 kolom x 4 baris = 12 label per halaman A4 */
+  .label-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2mm;
+    height: 68mm;
+    padding: 4mm;
+    border: 0.2mm dashed #9ca3af;
+    break-inside: avoid;
+    text-align: center;
+    color: #000000;
+    background: #ffffff;
+  }
+  .label-cell img,
+  .label-cell svg,
+  .label-cell canvas { width: 40mm !important; height: 40mm !important; }
+  .label-cell .label-kode { font-family: monospace; font-size: 11pt; font-weight: 700; }
+  .label-cell .label-nama { font-size: 8pt; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+
+/* Pratinjau label di layar */
+.label-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  color: #0f172a;
+  text-align: center;
+}
+.label-cell .label-kode { font-family: ui-monospace, monospace; font-weight: 700; font-size: 0.875rem; }
+.label-cell .label-nama { font-size: 0.75rem; color: #475569; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- Daftar aset ---------- */
+
+.asset-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s;
+}
+.asset-item:active { transform: scale(0.99); }
+.asset-item:hover { border-color: #93c5fd; }
+html.dark .asset-item { background: #0f172a; border-color: #1e293b; }
+html.dark .asset-item:hover { border-color: #1d4ed8; }
+.asset-item.is-selected { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }
+.asset-thumb {
+  flex: 0 0 72px;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #f1f5f9;
+}
+html.dark .asset-thumb { background: #1e293b; }
+
+/* ---------- Gerak berkurang ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
