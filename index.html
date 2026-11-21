@@ -1314,12 +1314,12 @@
     <!-- Area cetak (tersembunyi di layar, hanya tampil saat print) -->
     <div id="printArea" aria-hidden="true"></div>
 
-    <!-- Script aplikasi: urutan dijaga oleh atribut defer -->
+    <!-- Script aplikasi: app.js harus dimuat sebelum modul lain karena membuat window.UI -->
     <script src="js/config.js" defer></script>
     <script src="js/api.js" defer></script>
+    <script src="js/app.js" defer></script>
     <script src="js/upload.js" defer></script>
     <script src="js/qr.js" defer></script>
     <script src="js/scanner.js" defer></script>
-    <script src="js/app.js" defer></script>
   </body>
 </html>
