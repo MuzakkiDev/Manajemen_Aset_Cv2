@@ -302,6 +302,11 @@
     $('#headerTitle').textContent = TITLES[name] || APP_CONFIG.APP_NAME;
     $('#headerUser').textContent = loggedIn ? state.user.nama + ' · ' + state.user.role : '';
     $$('.nav-item').forEach((b) => b.classList.toggle('is-active', b.dataset.nav === NAV_FOR[name]));
+    $$('.nav-item-desktop').forEach((b) => {
+      if (b.dataset.nav !== 'scan') {
+        b.classList.toggle('is-active', b.dataset.nav === NAV_FOR[name]);
+      }
+    });
 
     document.title = (TITLES[name] ? TITLES[name] + ' · ' : '') + APP_CONFIG.APP_NAME;
     window.scrollTo(0, 0);
@@ -1483,6 +1488,14 @@
 
     $$('.nav-item').forEach((b) => {
       b.addEventListener('click', async () => {
+        if (state.currentView === 'form' && !(await confirmLeave())) return;
+        go(b.dataset.nav);
+      });
+    });
+    // Desktop nav items in header
+    $$('.nav-item-desktop').forEach((b) => {
+      b.addEventListener('click', async () => {
+        if (b.dataset.nav === 'scan') { onOpenScan(); return; }
         if (state.currentView === 'form' && !(await confirmLeave())) return;
         go(b.dataset.nav);
       });

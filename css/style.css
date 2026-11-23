@@ -330,7 +330,58 @@ html.dark .badge-danger  { background: rgba(220, 38, 38, 0.18); color: #fca5a5; 
 html.dark .badge-info    { background: rgba(37, 99, 235, 0.18); color: #93c5fd; border-color: rgba(147, 197, 253, 0.25); }
 html.dark .badge-neutral { background: rgba(148, 163, 184, 0.14); color: #cbd5e1; border-color: rgba(203, 213, 225, 0.18); }
 
-/* ---------- Navigasi Bawah (Glassmorphic Dock) ---------- */
+/* ---------- Navigasi Bawah (Glassmorphic Dock — mobile only) ---------- */
+
+/* Desktop nav in header */
+.nav-item-desktop {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.18s ease, background-color 0.18s ease;
+}
+.nav-item-desktop:hover {
+  color: #0f172a;
+  background: rgba(148, 163, 184, 0.1);
+}
+.nav-item-desktop.is-active {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+}
+html.dark .nav-item-desktop { color: #94a3b8; }
+html.dark .nav-item-desktop:hover {
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.07);
+}
+html.dark .nav-item-desktop.is-active {
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.14);
+}
+
+/* Scan button in desktop nav — subtle accent */
+.nav-item-desktop--scan {
+  color: #2563eb;
+}
+.nav-item-desktop--scan:hover {
+  color: #1d4ed8;
+  background: rgba(37, 99, 235, 0.1);
+}
+html.dark .nav-item-desktop--scan { color: #60a5fa; }
+html.dark .nav-item-desktop--scan:hover {
+  color: #93c5fd;
+  background: rgba(59, 130, 246, 0.14);
+}
+
+/* Mobile bottom nav item */
 
 .nav-item {
   display: flex;
@@ -487,6 +538,9 @@ html.dark .modal-panel {
   gap: 8px;
   padding: 0 16px;
   pointer-events: none;
+}
+@media (min-width: 768px) {
+  #toastRoot { bottom: 24px; }
 }
 .toast {
   display: flex;

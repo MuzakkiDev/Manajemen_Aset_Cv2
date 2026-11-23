@@ -95,6 +95,7 @@
         <div
           class="flex items-center justify-between h-16 px-4 max-w-5xl mx-auto"
         >
+          <!-- Logo & Title -->
           <div class="flex items-center gap-3 min-w-0">
             <span
               class="grid place-items-center w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white shadow-md shadow-brand-500/25 shrink-0"
@@ -111,6 +112,27 @@
               ></p>
             </div>
           </div>
+
+          <!-- Desktop Navigation (hidden on mobile) -->
+          <nav id="desktopNav" class="hidden md:flex items-center gap-1">
+            <button type="button" class="nav-item-desktop" data-nav="home">
+              <i data-lucide="home" class="w-4 h-4"></i><span>Beranda</span>
+            </button>
+            <button type="button" class="nav-item-desktop" data-nav="list">
+              <i data-lucide="package" class="w-4 h-4"></i><span>Aset</span>
+            </button>
+            <button type="button" class="nav-item-desktop nav-item-desktop--scan" data-nav="scan">
+              <i data-lucide="scan-line" class="w-4 h-4"></i><span>Scan QR</span>
+            </button>
+            <button type="button" class="nav-item-desktop" data-nav="label">
+              <i data-lucide="printer" class="w-4 h-4"></i><span>Label</span>
+            </button>
+            <button type="button" class="nav-item-desktop" data-nav="account">
+              <i data-lucide="user" class="w-4 h-4"></i><span>Akun</span>
+            </button>
+          </nav>
+
+          <!-- Right actions -->
           <div class="flex items-center gap-1.5">
             <button
               id="btnTheme"
@@ -133,7 +155,7 @@
       </header>
 
       <!-- ========================= KONTEN ========================= -->
-      <main id="main" class="flex-1 w-full max-w-5xl mx-auto px-4 py-6 pb-32">
+      <main id="main" class="flex-1 w-full max-w-5xl mx-auto px-4 py-6 pb-32 md:pb-8">
         <!-- ---------- LOGIN ---------- -->
         <section
           id="view-login"
@@ -1031,10 +1053,10 @@
         </section>
       </main>
 
-      <!-- ========================= NAVIGASI BAWAH ========================= -->
+      <!-- ========================= NAVIGASI BAWAH (mobile only) ========================= -->
       <nav
         id="bottomNav"
-        class="hidden fixed bottom-0 inset-x-0 z-30 safe-bottom bg-white/80 dark:bg-[#0b0f19]/85 backdrop-blur-2xl border-t border-slate-200/80 dark:border-slate-800/80 shadow-[0_-4px_25px_rgba(0,0,0,0.03)] dark:shadow-[0_-4px_25px_rgba(0,0,0,0.3)]"
+        class="hidden md:!hidden fixed bottom-0 inset-x-0 z-30 safe-bottom bg-white/80 dark:bg-[#0b0f19]/85 backdrop-blur-2xl border-t border-slate-200/80 dark:border-slate-800/80 shadow-[0_-4px_25px_rgba(0,0,0,0.03)] dark:shadow-[0_-4px_25px_rgba(0,0,0,0.3)]"
       >
         <div class="grid grid-cols-5 max-w-md mx-auto h-16 items-center px-3">
           <button type="button" class="nav-item" data-nav="home">
@@ -1066,7 +1088,7 @@
       <button
         id="btnAddAsset"
         type="button"
-        class="hidden fixed right-6 bottom-24 z-30 btn-primary !rounded-full !px-5 !py-3 shadow-xl shadow-brand-500/30 transition-transform hover:scale-105 active:scale-95"
+        class="hidden fixed right-6 bottom-24 md:bottom-8 z-30 btn-primary !rounded-full !px-5 !py-3 shadow-xl shadow-brand-500/30 transition-transform hover:scale-105 active:scale-95"
         aria-label="Tambah aset"
       >
         <i data-lucide="plus" class="w-5 h-5"></i><span>Tambah aset</span>
