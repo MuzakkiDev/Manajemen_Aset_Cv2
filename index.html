@@ -16,6 +16,14 @@
     />
     <link rel="stylesheet" href="css/style.css" />
 
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Terapkan tema sebelum render untuk mencegah kedipan -->
     <script>
       (function () {
@@ -36,6 +44,10 @@
         darkMode: "class",
         theme: {
           extend: {
+            fontFamily: {
+              sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+              mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+            },
             colors: {
               brand: {
                 50: "#eff6ff",
@@ -48,6 +60,7 @@
                 700: "#1d4ed8",
                 800: "#1e40af",
                 900: "#1e3a8a",
+                950: "#172554",
               },
             },
           },
@@ -71,38 +84,38 @@
   </head>
 
   <body
-    class="h-full bg-slate-100 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased"
+    class="h-full bg-slate-50/70 text-slate-900 dark:bg-[#0b0f19] dark:text-slate-100 antialiased font-sans"
   >
     <div id="app" class="min-h-full flex flex-col">
       <!-- ========================= HEADER ========================= -->
       <header
         id="appHeader"
-        class="hidden sticky top-0 z-30 safe-top bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-800"
+        class="hidden sticky top-0 z-30 safe-top bg-white/75 dark:bg-[#0b0f19]/80 backdrop-blur-xl border-b border-slate-200/70 dark:border-slate-800/80 transition-colors"
       >
         <div
-          class="flex items-center justify-between h-14 px-4 max-w-5xl mx-auto"
+          class="flex items-center justify-between h-16 px-4 max-w-5xl mx-auto"
         >
-          <div class="flex items-center gap-2.5 min-w-0">
+          <div class="flex items-center gap-3 min-w-0">
             <span
-              class="grid place-items-center w-8 h-8 rounded-lg bg-brand-600 text-white shrink-0"
+              class="grid place-items-center w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white shadow-md shadow-brand-500/25 shrink-0"
             >
-              <i data-lucide="package" class="w-4 h-4"></i>
+              <i data-lucide="package" class="w-4.5 h-4.5"></i>
             </span>
             <div class="min-w-0">
-              <h1 id="headerTitle" class="text-sm font-semibold truncate">
+              <h1 id="headerTitle" class="text-sm font-bold tracking-tight truncate text-slate-900 dark:text-white">
                 Manajemen Aset
               </h1>
               <p
                 id="headerUser"
-                class="text-xs text-slate-500 dark:text-slate-400 truncate"
+                class="text-xs font-medium text-slate-500 dark:text-slate-400 truncate"
               ></p>
             </div>
           </div>
-          <div class="flex items-center gap-1">
+          <div class="flex items-center gap-1.5">
             <button
               id="btnTheme"
               type="button"
-              class="icon-btn"
+              class="icon-btn text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
               aria-label="Ganti tema"
             >
               <i data-lucide="moon" class="w-5 h-5"></i>
@@ -110,7 +123,7 @@
             <button
               id="btnLogout"
               type="button"
-              class="icon-btn"
+              class="icon-btn text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
               aria-label="Keluar"
             >
               <i data-lucide="log-out" class="w-5 h-5"></i>
@@ -120,24 +133,30 @@
       </header>
 
       <!-- ========================= KONTEN ========================= -->
-      <main id="main" class="flex-1 w-full max-w-5xl mx-auto px-4 py-4 pb-32">
+      <main id="main" class="flex-1 w-full max-w-5xl mx-auto px-4 py-6 pb-32">
         <!-- ---------- LOGIN ---------- -->
         <section
           id="view-login"
           data-view="login"
-          class="view hidden pt-6 sm:pt-16"
+          class="view hidden pt-8 sm:pt-20"
         >
-          <div class="max-w-sm mx-auto">
+          <div class="relative max-w-sm mx-auto">
+            <!-- Decorative gradient blur backdrop -->
+            <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-72 h-72 bg-gradient-to-tr from-brand-500/15 via-indigo-500/10 to-transparent dark:from-brand-500/25 dark:via-indigo-500/15 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
             <div class="text-center mb-8">
               <span
-                class="inline-grid place-items-center w-14 h-14 rounded-2xl bg-brand-600 text-white shadow-lg shadow-brand-600/30"
+                class="inline-grid place-items-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white shadow-xl shadow-brand-500/25"
               >
                 <i data-lucide="package" class="w-7 h-7"></i>
               </span>
-              <h2 class="mt-4 text-xl font-bold">Sistem Manajemen Aset</h2>
-              <p class="text-sm text-slate-500 dark:text-slate-400">
+              <h2 class="mt-4 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                Sistem Manajemen Aset
+              </h2>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
                 Masuk dengan akun yang diberikan admin
               </p>
+            </div>
             </div>
 
             <form id="formLogin" novalidate class="card space-y-4">
@@ -206,17 +225,26 @@
             </button>
           </div>
 
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <div class="stat-card">
-              <p class="stat-label">Total aset</p>
+              <div class="flex items-center justify-between">
+                <p class="stat-label">Total aset</p>
+                <span class="w-2 h-2 rounded-full bg-brand-500 shadow-sm shadow-brand-500/50"></span>
+              </div>
               <p id="statTotal" class="stat-value">-</p>
             </div>
             <div class="stat-card">
-              <p class="stat-label">Nilai perolehan</p>
+              <div class="flex items-center justify-between">
+                <p class="stat-label">Nilai perolehan</p>
+                <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50"></span>
+              </div>
               <p id="statValue" class="stat-value text-base sm:text-xl">-</p>
             </div>
             <div class="stat-card">
-              <p class="stat-label">Rusak (ringan/berat)</p>
+              <div class="flex items-center justify-between">
+                <p class="stat-label">Rusak (ringan/berat)</p>
+                <span class="w-2 h-2 rounded-full bg-amber-500 shadow-sm shadow-amber-500/50"></span>
+              </div>
               <p
                 id="statRusak"
                 class="stat-value text-amber-600 dark:text-amber-400"
@@ -225,7 +253,10 @@
               </p>
             </div>
             <div class="stat-card">
-              <p class="stat-label">Garansi &lt; 60 hari</p>
+              <div class="flex items-center justify-between">
+                <p class="stat-label">Garansi &lt; 60 hari</p>
+                <span class="w-2 h-2 rounded-full bg-sky-500 shadow-sm shadow-sky-500/50"></span>
+              </div>
               <p
                 id="statGaransi"
                 class="stat-value text-sky-600 dark:text-sky-400"
@@ -1003,9 +1034,9 @@
       <!-- ========================= NAVIGASI BAWAH ========================= -->
       <nav
         id="bottomNav"
-        class="hidden fixed bottom-0 inset-x-0 z-30 safe-bottom bg-white/95 dark:bg-slate-900/95 backdrop-blur border-t border-slate-200 dark:border-slate-800"
+        class="hidden fixed bottom-0 inset-x-0 z-30 safe-bottom bg-white/80 dark:bg-[#0b0f19]/85 backdrop-blur-2xl border-t border-slate-200/80 dark:border-slate-800/80 shadow-[0_-4px_25px_rgba(0,0,0,0.03)] dark:shadow-[0_-4px_25px_rgba(0,0,0,0.3)]"
       >
-        <div class="grid grid-cols-5 max-w-md mx-auto h-16 items-center px-2">
+        <div class="grid grid-cols-5 max-w-md mx-auto h-16 items-center px-3">
           <button type="button" class="nav-item" data-nav="home">
             <i data-lucide="home" class="w-5 h-5"></i><span>Beranda</span>
           </button>
@@ -1035,7 +1066,7 @@
       <button
         id="btnAddAsset"
         type="button"
-        class="hidden fixed right-4 bottom-24 z-30 btn-primary !rounded-full !px-4 shadow-xl shadow-brand-600/30"
+        class="hidden fixed right-6 bottom-24 z-30 btn-primary !rounded-full !px-5 !py-3 shadow-xl shadow-brand-500/30 transition-transform hover:scale-105 active:scale-95"
         aria-label="Tambah aset"
       >
         <i data-lucide="plus" class="w-5 h-5"></i><span>Tambah aset</span>
