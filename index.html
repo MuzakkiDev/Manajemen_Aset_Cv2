@@ -160,75 +160,122 @@
         <section
           id="view-login"
           data-view="login"
-          class="view hidden pt-8 sm:pt-20"
+          class="view hidden py-8 sm:py-16"
         >
-          <div class="relative max-w-sm mx-auto">
+          <div class="relative w-full max-w-[420px] mx-auto px-4 sm:px-0">
             <!-- Decorative gradient blur backdrop -->
-            <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-72 h-72 bg-gradient-to-tr from-brand-500/15 via-indigo-500/10 to-transparent dark:from-brand-500/25 dark:via-indigo-500/15 rounded-full blur-3xl pointer-events-none -z-10"></div>
+            <div
+              class="absolute -top-16 left-1/2 -translate-x-1/2 w-80 h-80 bg-gradient-to-tr from-brand-500/25 via-indigo-500/20 to-purple-500/15 dark:from-brand-500/35 dark:via-indigo-500/25 rounded-full blur-3xl pointer-events-none -z-10"
+            ></div>
 
-            <div class="text-center mb-8">
-              <span
-                class="inline-grid place-items-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white shadow-xl shadow-brand-500/25"
+            <!-- Theme Toggle on Login Screen -->
+            <div class="flex justify-end mb-2">
+              <button
+                id="btnLoginTheme"
+                type="button"
+                class="icon-btn text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                aria-label="Ganti tema"
+                title="Ganti tema (Gelap/Terang)"
               >
-                <i data-lucide="package" class="w-7 h-7"></i>
-              </span>
-              <h2 class="mt-4 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                <i data-lucide="moon" class="w-5 h-5"></i>
+              </button>
+            </div>
+
+            <!-- Logo & Brand Header -->
+            <div class="text-center mb-8">
+              <div
+                class="inline-grid place-items-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-indigo-700 text-white shadow-xl shadow-brand-500/30 ring-4 ring-brand-500/10 mb-4 transform transition-transform hover:scale-105 duration-200"
+              >
+                <i data-lucide="package" class="w-8 h-8"></i>
+              </div>
+              <h2
+                class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white"
+              >
                 Sistem Manajemen Aset
               </h2>
-              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1.5">
                 Masuk dengan akun yang diberikan admin
               </p>
             </div>
-            </div>
 
-            <form id="formLogin" novalidate class="card space-y-4">
+            <!-- Form Card -->
+            <form
+              id="formLogin"
+              novalidate
+              class="card space-y-4 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200/80 dark:border-slate-800/80 p-6 sm:p-7 backdrop-blur-sm"
+            >
               <div>
                 <label for="loginUsername" class="label">Username</label>
-                <input
-                  id="loginUsername"
-                  name="username"
-                  type="text"
-                  autocomplete="username"
-                  autocapitalize="none"
-                  spellcheck="false"
-                  maxlength="50"
-                  required
-                  class="input"
-                />
+                <div class="input-icon-wrap">
+                  <span class="input-icon-left">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                  </span>
+                  <input
+                    id="loginUsername"
+                    name="username"
+                    type="text"
+                    autocomplete="username"
+                    autocapitalize="none"
+                    spellcheck="false"
+                    maxlength="50"
+                    placeholder="Masukkan username Anda"
+                    required
+                    class="input"
+                  />
+                </div>
                 <p class="field-error" data-err="username"></p>
               </div>
+
               <div>
                 <label for="loginPassword" class="label">Password</label>
-                <div class="relative">
+                <div class="input-icon-wrap">
+                  <span class="input-icon-left">
+                    <i data-lucide="lock" class="w-4 h-4"></i>
+                  </span>
                   <input
                     id="loginPassword"
                     name="password"
                     type="password"
                     autocomplete="current-password"
                     maxlength="128"
+                    placeholder="Masukkan password Anda"
                     required
                     class="input pr-12"
                   />
                   <button
                     id="btnTogglePassword"
                     type="button"
-                    class="icon-btn absolute right-1 top-1/2 -translate-y-1/2"
+                    class="icon-btn absolute right-1 top-1/2 -translate-y-1/2 !w-9 !h-9 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                     aria-label="Tampilkan password"
                   >
-                    <i data-lucide="eye" class="w-5 h-5"></i>
+                    <i data-lucide="eye" class="w-4 h-4"></i>
                   </button>
                 </div>
                 <p class="field-error" data-err="password"></p>
               </div>
+
               <p
                 id="loginError"
-                class="hidden text-sm text-red-600 dark:text-red-400"
+                class="hidden text-sm p-3 rounded-xl bg-red-50 text-red-600 border border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-900/50"
                 role="alert"
               ></p>
-              <button id="btnLogin" type="submit" class="btn-primary w-full">
+
+              <button
+                id="btnLogin"
+                type="submit"
+                class="btn-primary w-full py-2.5 mt-2 font-semibold shadow-lg shadow-brand-500/25"
+              >
                 <span class="btn-label">Masuk</span>
               </button>
             </form>
+
+            <!-- Bottom Badge -->
+            <div
+              class="mt-6 flex items-center justify-center gap-2 text-xs text-slate-400 dark:text-slate-500"
+            >
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i>
+              <span>Portal Terproteksi & Terenkripsi</span>
+            </div>
           </div>
         </section>
 

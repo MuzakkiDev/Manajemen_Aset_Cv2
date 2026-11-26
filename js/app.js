@@ -487,8 +487,12 @@
     const btn = $('#btnTheme');
     if (btn) {
       btn.innerHTML = '<i data-lucide="' + (isDark ? 'sun' : 'moon') + '" class="w-5 h-5"></i>';
-      UI.icons();
     }
+    const btnLogin = $('#btnLoginTheme');
+    if (btnLogin) {
+      btnLogin.innerHTML = '<i data-lucide="' + (isDark ? 'sun' : 'moon') + '" class="w-5 h-5"></i>';
+    }
+    UI.icons();
   }
 
   function toggleTheme() {
@@ -1484,6 +1488,8 @@
     $('#formLogin').addEventListener('submit', onLogin);
     $('#btnTogglePassword').addEventListener('click', togglePasswordVisibility);
     $('#btnTheme').addEventListener('click', toggleTheme);
+    const btnLoginTheme = $('#btnLoginTheme');
+    if (btnLoginTheme) btnLoginTheme.addEventListener('click', toggleTheme);
     $('#btnLogout').addEventListener('click', onLogout);
 
     $$('.nav-item').forEach((b) => {
