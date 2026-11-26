@@ -172,7 +172,7 @@
   async function open(opts) {
     const o = opts || {};
     state.mode = o.mode === 'form' ? 'form' : 'lookup';
-    state.onCode = typeof o.onCode === 'function' ? o.onCode : null;
+    state.onCode = typeof o.onDecode === 'function' ? o.onDecode : (typeof o.onCode === 'function' ? o.onCode : null);
     state.handled = false;
     state.openSeq++;
 

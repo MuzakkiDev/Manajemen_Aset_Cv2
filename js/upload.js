@@ -9,7 +9,7 @@
 
   const C = window.APP_CONFIG;
   const UI = window.UI;
-  const api = window.api;
+  const api = window.Api || window.api;
   const $ = (sel) => document.querySelector(sel);
 
   const state = {
@@ -248,9 +248,9 @@
   function open(opts) {
     const o = opts || {};
     resetState();
-    state.kode = String(o.kode_aset || '').toUpperCase();
-    state.jenis = o.jenis || 'Nota';
-    state.onDone = typeof o.onDone === 'function' ? o.onDone : null;
+    state.kode = String(o.kodeAset || o.kode_aset || '').toUpperCase();
+    state.jenis = o.jenisDefault || o.jenis || 'Nota';
+    state.onDone = typeof o.onUploaded === 'function' ? o.onUploaded : (typeof o.onDone === 'function' ? o.onDone : null);
 
     $('#uploadTitle').textContent = 'Unggah ' + (jenisIsPhotoOnly() ? 'foto' : 'berkas') + ' · ' + state.kode;
     const sel = $('#uploadJenis');
@@ -305,7 +305,9 @@
     });
   }
 
-  window.Upload = Object.freeze({ open: open, close: close });
+  const UploadTools = Object.freeze({ open: open, close: close });
+  window.UploadTools = UploadTools;
+  window.Upload = UploadTools;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bindEvents);

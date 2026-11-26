@@ -187,11 +187,17 @@
     });
   }
 
-  window.Qr = Object.freeze({
+  const QRTools = Object.freeze({
+    openQrModal: showModal,
+    renderLabelSheet: renderPreview,
+    printLabelSheet: printLabels,
     showModal: showModal,
     renderPreview: renderPreview,
     printLabels: printLabels
   });
+
+  window.QRTools = QRTools;
+  window.Qr = QRTools;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bindEvents);

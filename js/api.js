@@ -132,3 +132,4 @@ const Api = (() => {
 })();
 
 window.Api = Api;
+window.api = Api;
