@@ -59,11 +59,11 @@ input, select, textarea { font-size: 16px; font-family: inherit; }
 /* ---------- Komponen Dasar: Bento Card & Surfaces ---------- */
 
 .card {
-  background: #ffffff;
-  border: 1px solid rgba(24, 24, 27, 0.08);
+  background: #fbf8f2;
+  border: 1px solid rgba(120, 100, 80, 0.14);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 1px 2px rgba(24, 24, 27, 0.03);
+  box-shadow: 0 1px 2px rgba(41, 34, 30, 0.03);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 html.dark .card {
@@ -76,7 +76,7 @@ html.dark .card {
   font-size: 0.9375rem;
   font-weight: 700;
   letter-spacing: -0.015em;
-  color: #0f172a;
+  color: #29221e;
 }
 html.dark .card-title { color: #f8fafc; }
 
@@ -85,7 +85,7 @@ html.dark .card-title { color: #f8fafc; }
   margin-bottom: 6px;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #334155;
+  color: #4a3f38;
   letter-spacing: -0.01em;
 }
 html.dark .label { color: #cbd5e1; }
@@ -94,7 +94,7 @@ html.dark .label { color: #cbd5e1; }
 .help {
   margin-top: 5px;
   font-size: 0.75rem;
-  color: #64748b;
+  color: #786b60;
   line-height: 1.4;
 }
 html.dark .help { color: #94a3b8; }
@@ -106,20 +106,20 @@ html.dark .help { color: #94a3b8; }
   width: 100%;
   min-height: 44px;
   padding: 10px 14px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #d9d0c3;
   border-radius: 12px;
-  background: #ffffff;
-  color: #0f172a;
+  background: #fdfbf7;
+  color: #29221e;
   font-size: 0.9375rem;
   outline: none;
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
 }
-.input::placeholder { color: #94a3b8; }
+.input::placeholder { color: #9c8f82; }
 .input:focus {
   border-color: #9f1239;
   box-shadow: 0 0 0 3px rgba(159, 18, 57, 0.14);
 }
-.input[readonly] { background: #f8fafc; color: #475569; }
+.input[readonly] { background: #f2ece1; color: #5c5047; }
 .input:disabled { opacity: 0.6; cursor: not-allowed; }
 html.dark .input {
   background: #0f0c0d;
@@ -221,13 +221,13 @@ html.dark .field-error { color: #f87171; }
 .btn-primary:active { transform: translateY(0) scale(0.98); }
 
 .btn-secondary {
-  background: #ffffff;
-  color: #18181b;
-  border: 1px solid rgba(24, 24, 27, 0.12);
-  box-shadow: 0 1px 2px rgba(24, 24, 27, 0.04);
+  background: #fdfbf7;
+  color: #29221e;
+  border: 1px solid rgba(120, 100, 80, 0.22);
+  box-shadow: 0 1px 2px rgba(41, 34, 30, 0.04);
 }
 .btn-secondary:hover:not(:disabled) {
-  background: #faf9f9;
+  background: #f4efe6;
   border-color: rgba(159, 18, 57, 0.35);
   transform: translateY(-1px);
 }
@@ -292,11 +292,11 @@ html.dark .icon-btn:hover { background: rgba(255, 255, 255, 0.08); }
 /* ---------- Stat Card (Bento Clean Metric) ---------- */
 
 .stat-card {
-  background: #ffffff;
-  border: 1px solid rgba(24, 24, 27, 0.08);
+  background: #fbf8f2;
+  border: 1px solid rgba(120, 100, 80, 0.14);
   border-radius: 16px;
   padding: 18px 20px;
-  box-shadow: 0 1px 2px rgba(24, 24, 27, 0.02);
+  box-shadow: 0 1px 2px rgba(41, 34, 30, 0.03);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
 }
 .stat-card:hover {
@@ -320,7 +320,7 @@ html.dark .stat-card:hover {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #64748b;
+  color: #786b60;
 }
 html.dark .stat-label { color: #94a3b8; }
 .stat-value {
@@ -329,7 +329,7 @@ html.dark .stat-label { color: #94a3b8; }
   font-weight: 800;
   letter-spacing: -0.025em;
   word-break: break-word;
-  color: #0f172a;
+  color: #29221e;
 }
 html.dark .stat-value { color: #f8fafc; }
 
@@ -453,7 +453,7 @@ html.dark .nav-item.is-active {
   width: 54px;
   height: 54px;
   margin-top: -24px;
-  border: 4px solid #ffffff;
+  border: 4px solid #f4efe6;
   border-radius: 9999px;
   background: linear-gradient(135deg, #be123c 0%, #881337 100%);
   color: #ffffff;
@@ -492,10 +492,10 @@ html.dark .nav-fab {
   max-height: 92dvh;
   overflow-y: auto;
   padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 0px));
-  background: #ffffff;
+  background: #fbf8f2;
   border-radius: 28px 28px 0 0;
-  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 20px 60px -15px rgba(41, 34, 30, 0.25);
+  border: 1px solid rgba(120, 100, 80, 0.16);
   animation: sheet-up 0.24s cubic-bezier(0.16, 1, 0.3, 1);
 }
 html.dark .modal-panel {
@@ -614,7 +614,7 @@ html.dark .modal-panel {
 
 .skeleton {
   border-radius: 16px;
-  background: linear-gradient(90deg, #e4e4e7 25%, #f4f4f5 37%, #e4e4e7 63%);
+  background: linear-gradient(90deg, #e8e1d5 25%, #f3ede2 37%, #e8e1d5 63%);
   background-size: 400% 100%;
   animation: shimmer 1.4s ease infinite;
 }
@@ -697,9 +697,9 @@ html.dark .skeleton {
   gap: 14px;
   padding: 14px;
   border-radius: 16px;
-  background: #ffffff;
-  border: 1px solid rgba(24, 24, 27, 0.08);
-  box-shadow: 0 1px 2px rgba(24, 24, 27, 0.02);
+  background: #fbf8f2;
+  border: 1px solid rgba(120, 100, 80, 0.14);
+  box-shadow: 0 1px 2px rgba(41, 34, 30, 0.03);
   cursor: pointer;
   transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease, box-shadow 0.18s ease;
 }
@@ -728,8 +728,8 @@ html.dark .asset-item:hover {
   height: 76px;
   border-radius: 12px;
   object-fit: cover;
-  background: #f4f4f5;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: #eee7da;
+  border: 1px solid rgba(120, 100, 80, 0.08);
 }
 html.dark .asset-thumb {
   background: #1f191b;
