@@ -37,3 +37,5 @@ const APP_CONFIG = Object.freeze({
   /** Token sesi disimpan di sessionStorage (hilang saat tab ditutup), bukan localStorage. */
   STORAGE_KEYS: Object.freeze({ TOKEN: 'aset_token', THEME: 'theme' })
 });
+
+window.APP_CONFIG = APP_CONFIG;

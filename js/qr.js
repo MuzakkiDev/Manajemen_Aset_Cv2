@@ -81,12 +81,14 @@
   function downloadPng() {
     if (!current) return;
     const canvas = $('#qrCanvas canvas');
-    if (!canvas) {
+    const img = $('#qrCanvas img');
+    const src = canvas ? canvas.toDataURL('image/png') : (img && img.src ? img.src : '');
+    if (!src) {
       UI.toast('QR belum siap diunduh.', 'warning');
       return;
     }
     const link = document.createElement('a');
-    link.href = canvas.toDataURL('image/png');
+    link.href = src;
     link.download = 'QR_' + current.kode_aset + '.png';
     document.body.appendChild(link);
     link.click();

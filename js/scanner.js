@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const C = window.APP_CONFIG;
+  const C = window.APP_CONFIG || APP_CONFIG;
   const UI = window.UI;
   const $ = (sel) => document.querySelector(sel);
 
@@ -41,7 +41,7 @@
     const raw = String(text || '').trim();
     const hashMatch = raw.match(/#\/asset\/([^/?#\s]+)/i);
     const candidate = (hashMatch ? decodeURIComponent(hashMatch[1]) : raw).trim().toUpperCase();
-    return C.CODE_PATTERN.test(candidate) ? candidate : '';
+    return C.KODE_PATTERN.test(candidate) ? candidate : '';
   }
 
   async function stopCamera() {
@@ -180,6 +180,8 @@
     $('#formManualKode').classList.add('hidden');
     $('#manualKode').value = '';
     $('#manualKode').classList.remove('is-invalid');
+    const errEl = $('#formManualKode [data-err="manualKode"]');
+    if (errEl) errEl.textContent = '';
     $('#scanStatus').classList.remove('text-red-600', 'dark:text-red-400');
     setStatus('Meminta izin kamera...');
     resetButtons();
@@ -231,15 +233,16 @@
   async function submitManual(e) {
     e.preventDefault();
     const input = $('#manualKode');
+    const errEl = $('#formManualKode [data-err="manualKode"]');
     const raw = input.value.trim().toUpperCase();
-    if (!C.CODE_PATTERN.test(raw)) {
+    if (!C.KODE_PATTERN.test(raw)) {
       input.classList.add('is-invalid');
-      UI.setFieldErrors($('#formManualKode'), { manualKode: 'Format kode tidak valid (contoh: AST-2026-0001).' });
+      if (errEl) errEl.textContent = 'Format kode tidak valid (contoh: AST-2026-0001).';
       input.focus();
       return;
     }
     input.classList.remove('is-invalid');
-    UI.setFieldErrors($('#formManualKode'), {});
+    if (errEl) errEl.textContent = '';
     state.handled = true;
     const cb = state.onCode;
     await close();

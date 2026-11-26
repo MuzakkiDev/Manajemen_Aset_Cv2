@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const C = window.APP_CONFIG;
+  const C = window.APP_CONFIG || APP_CONFIG;
   const UI = window.UI;
   const api = window.Api || window.api;
   const $ = (sel) => document.querySelector(sel);
@@ -88,7 +88,7 @@
   /** Mengembalikan Blob gambar yang sudah dikecilkan. Format keluaran JPEG (kecuali PNG transparan tetap PNG). */
   async function compressImage(file) {
     const img = await loadImage(file);
-    const maxSide = C.IMAGE_MAX_SIDE;
+    const maxSide = C.IMG_MAX_SIDE;
     const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
     const w = Math.max(1, Math.round(img.naturalWidth * scale));
     const h = Math.max(1, Math.round(img.naturalHeight * scale));
@@ -103,7 +103,7 @@
     ctx.drawImage(img, 0, 0, w, h);
 
     const blob = await new Promise((resolve) => {
-      canvas.toBlob((b) => resolve(b), 'image/jpeg', C.IMAGE_QUALITY);
+      canvas.toBlob((b) => resolve(b), 'image/jpeg', C.IMG_QUALITY);
     });
     if (!blob) throw new Error('encode');
     return blob;
@@ -115,15 +115,16 @@
     $('#uploadError').classList.add('hidden');
 
     if (!file) return;
-    if (C.ALLOWED_MIME.indexOf(file.type) === -1) {
+    const mime = file.type === 'image/jpg' ? 'image/jpeg' : file.type;
+    if (C.ALLOWED_MIME.indexOf(mime) === -1) {
       showError('Tipe berkas tidak didukung. Gunakan JPG, PNG, WEBP, atau PDF.');
       return;
     }
-    if (jenisIsPhotoOnly() && file.type === 'application/pdf') {
+    if (jenisIsPhotoOnly() && mime === 'application/pdf') {
       showError('Foto harus berupa gambar (JPG, PNG, atau WEBP).');
       return;
     }
-    if (file.size > C.MAX_FILE_BYTES) {
+    if (file.size > C.UPLOAD_MAX_BYTES) {
       showError('Ukuran berkas maksimal 10 MB.');
       return;
     }
@@ -134,7 +135,7 @@
     try {
       let outBlob;
       let outMime;
-      if (file.type === 'application/pdf') {
+      if (mime === 'application/pdf') {
         outBlob = file;
         outMime = 'application/pdf';
       } else {
@@ -142,14 +143,14 @@
         outMime = 'image/jpeg';
       }
 
-      if (outBlob.size > C.MAX_FILE_BYTES) {
+      if (outBlob.size > C.UPLOAD_MAX_BYTES) {
         showError('Berkas masih terlalu besar setelah diproses. Coba foto dengan resolusi lebih rendah.');
         return;
       }
 
       state.file = outBlob;
       state.mime = outMime;
-      const base = sanitizeName(state.jenisName || state.jenis) || state.jenis;
+      const base = sanitizeName($('#uploadNama').value || state.jenis) || state.jenis;
       state.fileName = base + '.' + MIME_TO_EXT[outMime];
 
       if (state.previewUrl) URL.revokeObjectURL(state.previewUrl);
@@ -201,7 +202,7 @@
     const text = $('#uploadProgressText');
     $('#uploadError').classList.add('hidden');
     $('#uploadProgressWrap').classList.remove('hidden');
-    UI.setBusy(btn, true, 'Mengunggah...');
+    UI.setBtnLoading(btn, true, 'Mengunggah...');
     state.busy = true;
 
     try {
@@ -219,7 +220,7 @@
         mimeType: state.mime,
         fileName: state.fileName,
         base64: b64
-      }, { timeoutMs: C.UPLOAD_TIMEOUT_MS });
+      }, C.UPLOAD_TIMEOUT_MS);
 
       if (!res.success) {
         bar.style.width = '0%';
@@ -235,10 +236,12 @@
       close();
       if (typeof cb === 'function') cb(res.data);
     } catch (err) {
-      showError('Gagal memproses berkas. Coba lagi.');
+      bar.style.width = '0%';
+      text.textContent = '';
+      showError((err && err.message) || 'Gagal memproses berkas. Coba lagi.');
     } finally {
       state.busy = false;
-      UI.setBusy(btn, false);
+      UI.setBtnLoading(btn, false);
       btn.disabled = !state.file;
     }
   }
@@ -255,7 +258,7 @@
     $('#uploadTitle').textContent = 'Unggah ' + (jenisIsPhotoOnly() ? 'foto' : 'berkas') + ' · ' + state.kode;
     const sel = $('#uploadJenis');
     sel.value = state.jenis;
-    sel.disabled = !!o.jenis && jenisIsPhotoOnly();
+    sel.disabled = !!(o.jenisDefault || o.jenis) && jenisIsPhotoOnly();
     $('#uploadNama').value = '';
     UI.openModal('uploadModal');
 
