@@ -10,7 +10,7 @@ const APP_CONFIG = Object.freeze({
    * Diperoleh dari Deploy > Manage deployments > Web app URL.
    */
   API_URL:
-    "https://script.google.com/macros/s/AKfycbxUDg-AdnG4LMWfRN3jXI2wKk1tTLLiMVJHA4VNebX3DXKXtXmfxG0nJ5M_egG-RbbeTg/exec",
+    "https://script.google.com/macros/s/AKfycbytgWQ4PCzqL0QIKne5cu1OGy6aYgpSyu8nnP0ljuy8kDlWfrt4yL_g111wlejm2G_n/exec",
 
   APP_NAME: "Sistem Manajemen Aset",
   TZ: "Asia/Jakarta",
