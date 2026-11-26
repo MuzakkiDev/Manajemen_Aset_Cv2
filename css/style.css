@@ -480,7 +480,7 @@ html.dark .nav-fab {
   display: none;
   align-items: flex-end;
   justify-content: center;
-  background: rgba(15, 23, 42, 0.45);
+  background: rgba(12, 9, 10, 0.55);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
@@ -520,7 +520,7 @@ html.dark .modal-panel {
   min-height: 240px;
   overflow: hidden;
   border-radius: 20px;
-  background: #0f172a;
+  background: #151113;
 }
 #qrReader video {
   width: 100% !important;
@@ -591,7 +591,7 @@ html.dark .modal-panel {
 .toast.is-leaving { opacity: 0; transform: translateY(8px); }
 .toast-success { background: #059669; }
 .toast-error   { background: #dc2626; }
-.toast-info    { background: #0f172a; }
+.toast-info    { background: #6b102d; }
 .toast-warning { background: #d97706; }
 @keyframes toast-in {
   from { opacity: 0; transform: translateY(12px); }
@@ -614,12 +614,12 @@ html.dark .modal-panel {
 
 .skeleton {
   border-radius: 16px;
-  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 37%, #e2e8f0 63%);
+  background: linear-gradient(90deg, #e4e4e7 25%, #f4f4f5 37%, #e4e4e7 63%);
   background-size: 400% 100%;
   animation: shimmer 1.4s ease infinite;
 }
 html.dark .skeleton {
-  background: linear-gradient(90deg, #1e293b 25%, #334155 37%, #1e293b 63%);
+  background: linear-gradient(90deg, #1f191b 25%, #2e2528 37%, #1f191b 63%);
   background-size: 400% 100%;
 }
 @keyframes shimmer {
