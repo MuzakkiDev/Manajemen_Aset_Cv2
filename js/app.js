@@ -322,10 +322,50 @@
     UI.toast((err && err.message) || 'Terjadi kesalahan. Silakan coba lagi.', 'error', 5000);
   }
 
+  const CUSTOM_LOKASI_KEY = 'aset_custom_lokasi';
+
+  function getCustomLocations() {
+    try {
+      const raw = localStorage.getItem(CUSTOM_LOKASI_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr.filter((x) => typeof x === 'string' && x.trim()) : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function mergeCustomLocations(master) {
+    if (!master) return master;
+    const base = Array.isArray(master.lokasi) ? master.lokasi.slice() : [];
+    const seen = new Set(base.map((x) => String(x).trim().toLowerCase()));
+    getCustomLocations().forEach((loc) => {
+      const key = loc.trim().toLowerCase();
+      if (key && !seen.has(key)) {
+        seen.add(key);
+        base.push(loc.trim());
+      }
+    });
+    master.lokasi = base;
+    return master;
+  }
+
+  function saveCustomLocation(name) {
+    const clean = String(name || '').trim();
+    if (!clean) return false;
+    const list = getCustomLocations();
+    const exists = list.some((x) => x.toLowerCase() === clean.toLowerCase());
+    if (!exists) {
+      list.push(clean);
+      try { localStorage.setItem(CUSTOM_LOKASI_KEY, JSON.stringify(list)); } catch (_) {}
+    }
+    if (state.master) mergeCustomLocations(state.master);
+    return true;
+  }
+
   async function ensureMaster() {
     if (state.master || !state.user) return state.master;
     const res = await Api.getMaster();
-    state.master = res.data;
+    state.master = mergeCustomLocations(res.data);
     return state.master;
   }
 
@@ -1017,6 +1057,8 @@
     form.reset();
     clearErrors(form);
     showFormError('formError', '');
+    $('#addLokasiBox').classList.add('hidden');
+    $('#inputNewLokasi').value = '';
     state.form.dirty = false;
     fillMasterSelects(form, null);
 
@@ -1551,6 +1593,48 @@
     $('#btnFormScanKode').addEventListener('click', () => {
       if (!needModule('Scanner', 'open')) return;
       Scanner.open({ onDecode: (text) => handleScanResult(text, { fromForm: true }) });
+    });
+
+    // Tambah lokasi baru inline di form aset
+    const toggleAddLokasi = (show) => {
+      const box = $('#addLokasiBox');
+      const input = $('#inputNewLokasi');
+      box.classList.toggle('hidden', !show);
+      if (show) {
+        input.value = '';
+        input.focus();
+      }
+    };
+    const commitNewLokasi = () => {
+      const input = $('#inputNewLokasi');
+      const val = input.value.trim();
+      if (!val) {
+        UI.toast('Nama lokasi tidak boleh kosong.', 'warning');
+        input.focus();
+        return;
+      }
+      saveCustomLocation(val);
+      const sel = $('#fLokasi');
+      const list = (state.master && state.master.lokasi) ? state.master.lokasi : [val];
+      const matched = list.find((x) => x.toLowerCase() === val.toLowerCase()) || val;
+      fillSelect(sel, list, 'Pilih lokasi...', matched);
+      state.form.dirty = true;
+      toggleAddLokasi(false);
+      UI.toast('Lokasi "' + matched + '" ditambahkan.', 'success');
+    };
+    $('#btnToggleAddLokasi').addEventListener('click', () => {
+      const hidden = $('#addLokasiBox').classList.contains('hidden');
+      toggleAddLokasi(hidden);
+    });
+    $('#btnCancelNewLokasi').addEventListener('click', () => toggleAddLokasi(false));
+    $('#btnSaveNewLokasi').addEventListener('click', commitNewLokasi);
+    $('#inputNewLokasi').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        commitNewLokasi();
+      } else if (e.key === 'Escape') {
+        toggleAddLokasi(false);
+      }
     });
 
     // Label
