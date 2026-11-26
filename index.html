@@ -127,6 +127,9 @@
             <button type="button" class="nav-item-desktop" data-nav="label">
               <i data-lucide="printer" class="w-4 h-4"></i><span>Label</span>
             </button>
+            <button type="button" class="nav-item-desktop" data-nav="opname">
+              <i data-lucide="clipboard-check" class="w-4 h-4"></i><span>Opname</span>
+            </button>
             <button type="button" class="nav-item-desktop" data-nav="account">
               <i data-lucide="user" class="w-4 h-4"></i><span>Akun</span>
             </button>
@@ -288,10 +291,20 @@
               </p>
               <h2 id="homeName" class="text-lg font-bold truncate"></h2>
             </div>
-            <button id="btnHomeRefresh" type="button" class="btn-ghost">
-              <i data-lucide="rotate-ccw" class="w-4 h-4"></i
-              ><span>Muat ulang</span>
-            </button>
+            <div class="flex items-center gap-2 shrink-0">
+              <button
+                id="btnHomeOpname"
+                type="button"
+                class="btn-secondary !min-h-[38px] !px-3 text-xs"
+              >
+                <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+                <span>Stock Opname</span>
+              </button>
+              <button id="btnHomeRefresh" type="button" class="btn-ghost">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i
+                ><span>Muat ulang</span>
+              </button>
+            </div>
           </div>
 
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -981,6 +994,193 @@
             id="labelPreview"
             class="grid grid-cols-2 sm:grid-cols-3 gap-3"
           ></div>
+        </section>
+
+        <!-- ---------- STOCK OPNAME ---------- -->
+        <section
+          id="view-opname"
+          data-view="opname"
+          class="view hidden space-y-5"
+        >
+          <!-- List Sesi Opname -->
+          <div id="opnameSessionsPanel" class="space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="text-lg font-bold">Stock Opname</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  Audit fisik aset dan sinkronisasi ke Google Sheets
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  id="btnOpnameRefresh"
+                  type="button"
+                  class="btn-secondary !min-h-[40px] !px-3 text-xs"
+                >
+                  <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                  <span>Muat ulang</span>
+                </button>
+                <button
+                  id="btnOpnameToggleNew"
+                  type="button"
+                  class="btn-primary !min-h-[40px] !px-3.5 text-xs"
+                >
+                  <i data-lucide="plus" class="w-4 h-4"></i>
+                  <span>Mulai opname</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Form Buat Sesi Baru -->
+            <form id="formNewOpname" class="card hidden space-y-4">
+              <h3 class="card-title">Buat sesi Stock Opname baru</h3>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="opnameNama" class="label"
+                    >Nama sesi <span class="req">*</span></label
+                  >
+                  <input
+                    id="opnameNama"
+                    type="text"
+                    maxlength="80"
+                    placeholder="Contoh: Opname Q4 Kantor Pusat"
+                    required
+                    class="input"
+                  />
+                </div>
+                <div>
+                  <label for="opnameLokasi" class="label">Lokasi target</label>
+                  <select id="opnameLokasi" class="input"></select>
+                </div>
+              </div>
+              <div class="flex justify-end gap-2">
+                <button
+                  id="btnCancelNewOpname"
+                  type="button"
+                  class="btn-secondary"
+                >
+                  Batal
+                </button>
+                <button
+                  id="btnCreateOpname"
+                  type="submit"
+                  class="btn-primary"
+                >
+                  <span class="btn-label">Buat & mulai audit</span>
+                </button>
+              </div>
+            </form>
+
+            <!-- Daftar Sesi -->
+            <div id="opnameSessionList" class="space-y-2.5"></div>
+          </div>
+
+          <!-- Detail & Eksekusi Sesi Opname -->
+          <div id="opnameDetailPanel" class="hidden space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <button
+                  id="btnOpnameBack"
+                  type="button"
+                  class="icon-btn shrink-0"
+                  aria-label="Kembali ke daftar opname"
+                >
+                  <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </button>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2">
+                    <h2 id="opnameDetailTitle" class="text-lg font-bold truncate"></h2>
+                    <span id="opnameDetailBadge" class="badge"></span>
+                  </div>
+                  <p
+                    id="opnameDetailMeta"
+                    class="text-xs text-slate-500 dark:text-slate-400 truncate"
+                  ></p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  id="btnOpnameExport"
+                  type="button"
+                  class="btn-secondary !min-h-[38px] !px-3 text-xs"
+                >
+                  <i data-lucide="download" class="w-4 h-4"></i>
+                  <span>Ekspor CSV</span>
+                </button>
+                <button
+                  id="btnOpnameFinish"
+                  type="button"
+                  class="btn-primary !min-h-[38px] !px-3 text-xs"
+                >
+                  <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                  <span>Selesaikan</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 4 Stat Bento Ringkasan -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div class="stat-card !p-3.5">
+                <p class="stat-label">Target aset</p>
+                <p id="opStatTotal" class="stat-value !text-xl">0</p>
+              </div>
+              <div class="stat-card !p-3.5">
+                <p class="stat-label">Sesuai / Ada</p>
+                <p id="opStatSesuai" class="stat-value !text-xl text-emerald-600 dark:text-emerald-400">0</p>
+              </div>
+              <div class="stat-card !p-3.5">
+                <p class="stat-label">Bermasalah</p>
+                <p id="opStatMasalah" class="stat-value !text-xl text-amber-600 dark:text-amber-400">0</p>
+              </div>
+              <div class="stat-card !p-3.5">
+                <p class="stat-label">Belum dicek</p>
+                <p id="opStatBelum" class="stat-value !text-xl text-brand-600 dark:text-brand-400">0</p>
+              </div>
+            </div>
+
+            <!-- Panel Scan & Input Manual -->
+            <div id="opnameActionBar" class="card space-y-3">
+              <div class="flex flex-wrap gap-2">
+                <button
+                  id="btnOpnameScan"
+                  type="button"
+                  class="btn-primary flex-1 sm:flex-none"
+                >
+                  <i data-lucide="scan-line" class="w-4 h-4"></i>
+                  <span>Scan QR aset</span>
+                </button>
+                <form id="formOpnameManual" class="flex flex-1 gap-2 min-w-[220px]">
+                  <input
+                    id="opnameManualKode"
+                    type="text"
+                    maxlength="40"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    placeholder="Ketik kode aset lalu Enter..."
+                    class="input font-mono text-sm flex-1"
+                  />
+                  <button type="submit" class="btn-secondary shrink-0">
+                    Cek
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Filter Status Opname -->
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div id="opnameFilterTabs" class="flex flex-wrap gap-1.5">
+                <button type="button" data-opfilter="" class="btn-secondary !min-h-[34px] !px-3 text-xs">Semua</button>
+                <button type="button" data-opfilter="Belum Dicek" class="btn-secondary !min-h-[34px] !px-3 text-xs">Belum Dicek</button>
+                <button type="button" data-opfilter="Sesuai" class="btn-secondary !min-h-[34px] !px-3 text-xs">Sesuai</button>
+                <button type="button" data-opfilter="Rusak" class="btn-secondary !min-h-[34px] !px-3 text-xs">Rusak</button>
+                <button type="button" data-opfilter="Hilang" class="btn-secondary !min-h-[34px] !px-3 text-xs">Hilang</button>
+                <button type="button" data-opfilter="Salah Lokasi" class="btn-secondary !min-h-[34px] !px-3 text-xs">Salah Lokasi</button>
+              </div>
+            </div>
+
+            <!-- Daftar Item Opname -->
+            <div id="opnameItemList" class="space-y-2.5"></div>
+          </div>
         </section>
 
         <!-- ---------- AKUN ---------- -->

@@ -187,6 +187,12 @@
       items: []
     },
     detail: { asset: null, documents: [], kode: null },
+    opname: {
+      sessions: [],
+      current: null,
+      items: [],
+      filter: ''
+    },
     form: { mode: 'new', kode: null, asset: null, prefill: null, dirty: false },
     labelPrefill: null
   };
@@ -198,13 +204,14 @@
 
   const VIEW_IDS = {
     login: 'view-login', home: 'view-home', list: 'view-list',
-    asset: 'view-detail', form: 'view-form', label: 'view-label', account: 'view-account'
+    asset: 'view-detail', form: 'view-form', label: 'view-label',
+    opname: 'view-opname', account: 'view-account'
   };
   const TITLES = {
     home: 'Beranda', list: 'Daftar aset', asset: 'Detail aset',
-    form: 'Form aset', label: 'Cetak label', account: 'Akun'
+    form: 'Form aset', label: 'Cetak label', opname: 'Stock Opname', account: 'Akun'
   };
-  const NAV_FOR = { home: 'home', list: 'list', asset: 'list', form: 'list', label: 'label', account: 'account' };
+  const NAV_FOR = { home: 'home', list: 'list', asset: 'list', form: 'list', label: 'label', opname: 'opname', account: 'account' };
 
   function canEdit() {
     return !!state.user && APP_CONFIG.ROLE_RANK[state.user.role] >= APP_CONFIG.ROLE_RANK.Operator;
@@ -276,6 +283,7 @@
       case 'asset': return loadDetail(r.param);
       case 'form': return loadForm(r);
       case 'label': return loadLabel();
+      case 'opname': return loadOpname(r.param);
       case 'account': return loadAccount();
     }
   }
@@ -1403,7 +1411,292 @@
   }
 
   /* ==========================================================
-   * 13. AKUN, GANTI PASSWORD, ADMIN, AUDIT LOG
+   * 13. STOCK OPNAME
+   * ========================================================== */
+
+  function opnameStatusBadge(s) {
+    const map = {
+      'Sesuai': 'badge-success',
+      'Rusak': 'badge-warning',
+      'Hilang': 'badge-danger',
+      'Salah Lokasi': 'badge-info',
+      'Belum Dicek': 'badge-neutral'
+    };
+    return '<span class="badge ' + (map[s] || 'badge-neutral') + '">' + esc(s || 'Belum Dicek') + '</span>';
+  }
+
+  async function loadOpname(sessionId) {
+    const m = state.master || {};
+    fillSelect($('#opnameLokasi'), m.lokasi || [], 'Semua lokasi', '');
+    if (sessionId) {
+      return openOpnameSession(sessionId);
+    }
+    $('#opnameSessionsPanel').classList.remove('hidden');
+    $('#opnameDetailPanel').classList.add('hidden');
+    state.opname.current = null;
+    state.opname.items = [];
+
+    const listEl = $('#opnameSessionList');
+    listEl.innerHTML = '<div class="card text-sm text-slate-500 dark:text-slate-400">Memuat daftar sesi opname...</div>';
+    try {
+      const res = await Api.listOpname();
+      state.opname.sessions = Array.isArray(res.data) ? res.data : [];
+      renderOpnameSessions();
+    } catch (err) {
+      listEl.innerHTML =
+        '<div class="card text-sm space-y-2">' +
+          '<p class="font-semibold text-red-600 dark:text-red-400">Belum terhubung ke sheet Stock Opname</p>' +
+          '<p class="text-slate-500 dark:text-slate-400">' + esc(err && err.message ? err.message : 'Pastikan skrip Stock Opname sudah ditambahkan ke Google Apps Script Anda.') + '</p>' +
+        '</div>';
+    }
+  }
+
+  function renderOpnameSessions() {
+    const el = $('#opnameSessionList');
+    const list = state.opname.sessions;
+    if (!list.length) {
+      el.innerHTML = '<div class="card text-center py-10 text-sm text-slate-500 dark:text-slate-400">Belum ada sesi Stock Opname. Klik <strong>Mulai opname</strong> untuk membuat audit baru.</div>';
+      return;
+    }
+    el.innerHTML = list.map((s) => {
+      const done = s.status === 'Selesai';
+      const badge = done
+        ? '<span class="badge badge-success">Selesai</span>'
+        : '<span class="badge badge-warning">Berlangsung</span>';
+      const checked = Number(s.total_checked || 0);
+      const total = Number(s.total_target || 0);
+      const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+      return '<article class="card cursor-pointer hover:border-brand-500/40 transition-colors" data-opname-id="' + esc(s.id) + '">' +
+        '<div class="flex items-start justify-between gap-3">' +
+          '<div class="min-w-0">' +
+            '<div class="flex items-center gap-2">' +
+              '<h3 class="font-semibold truncate">' + esc(s.nama) + '</h3>' +
+              badge +
+            '</div>' +
+            '<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">' +
+              esc(s.lokasi || 'Semua lokasi') + ' · ' + esc(formatDateTime(s.created_at)) + ' · ' + esc(s.created_by || '-') +
+            '</p>' +
+          '</div>' +
+          '<div class="text-right shrink-0">' +
+            '<p class="font-mono text-sm font-bold">' + checked + '/' + total + '</p>' +
+            '<p class="text-xs text-slate-500 dark:text-slate-400">' + pct + '% dicek</p>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+    }).join('');
+    UI.icons();
+  }
+
+  async function onCreateOpname(e) {
+    e.preventDefault();
+    const nama = $('#opnameNama').value.trim();
+    const lokasi = $('#opnameLokasi').value;
+    if (!nama) {
+      UI.toast('Nama sesi opname wajib diisi.', 'warning');
+      $('#opnameNama').focus();
+      return;
+    }
+    const btn = $('#btnCreateOpname');
+    UI.setBtnLoading(btn, true, 'Menyiapkan...');
+    try {
+      const res = await Api.createOpname({ nama: nama, lokasi: lokasi });
+      $('#formNewOpname').reset();
+      $('#formNewOpname').classList.add('hidden');
+      UI.toast('Sesi Stock Opname dibuat.', 'success');
+      if (res.data && res.data.id) {
+        go('opname/' + encodeURIComponent(res.data.id));
+      } else {
+        loadOpname();
+      }
+    } catch (err) {
+      handleError(err);
+    } finally {
+      UI.setBtnLoading(btn, false);
+    }
+  }
+
+  async function openOpnameSession(id) {
+    $('#opnameSessionsPanel').classList.add('hidden');
+    $('#opnameDetailPanel').classList.remove('hidden');
+    state.opname.filter = '';
+    UI.setLoading(true, 'Memuat data Stock Opname...');
+    try {
+      const res = await Api.getOpname(id);
+      state.opname.current = res.data.session;
+      state.opname.items = Array.isArray(res.data.items) ? res.data.items : [];
+      renderOpnameDetail();
+    } catch (err) {
+      handleError(err);
+      go('opname');
+    } finally {
+      UI.setLoading(false);
+    }
+  }
+
+  function renderOpnameDetail() {
+    const s = state.opname.current;
+    if (!s) return;
+    const items = state.opname.items;
+    const isFinished = s.status === 'Selesai';
+
+    $('#opnameDetailTitle').textContent = s.nama;
+    const badge = $('#opnameDetailBadge');
+    badge.className = 'badge ' + (isFinished ? 'badge-success' : 'badge-warning');
+    badge.textContent = s.status;
+    $('#opnameDetailMeta').textContent = (s.lokasi || 'Semua lokasi') + ' · Dibuat ' + formatDateTime(s.created_at) + ' oleh ' + (s.created_by || '-');
+
+    $('#opnameActionBar').classList.toggle('hidden', isFinished || !canEdit());
+    $('#btnOpnameFinish').classList.toggle('hidden', isFinished || !canEdit());
+
+    const sesuai = items.filter((i) => i.status_opname === 'Sesuai').length;
+    const masalah = items.filter((i) => i.status_opname === 'Rusak' || i.status_opname === 'Hilang' || i.status_opname === 'Salah Lokasi').length;
+    const belum = items.filter((i) => !i.status_opname || i.status_opname === 'Belum Dicek').length;
+
+    $('#opStatTotal').textContent = String(items.length);
+    $('#opStatSesuai').textContent = String(sesuai);
+    $('#opStatMasalah').textContent = String(masalah);
+    $('#opStatBelum').textContent = String(belum);
+
+    $$('#opnameFilterTabs button').forEach((b) => {
+      const active = (b.dataset.opfilter || '') === state.opname.filter;
+      b.className = (active ? 'btn-primary' : 'btn-secondary') + ' !min-h-[34px] !px-3 text-xs';
+    });
+
+    const filtered = state.opname.filter
+      ? items.filter((i) => (i.status_opname || 'Belum Dicek') === state.opname.filter)
+      : items;
+
+    const listEl = $('#opnameItemList');
+    if (!filtered.length) {
+      listEl.innerHTML = '<div class="card text-center py-8 text-sm text-slate-500 dark:text-slate-400">Tidak ada aset pada filter ini.</div>';
+      return;
+    }
+
+    listEl.innerHTML = filtered.map((item) => {
+      const st = item.status_opname || 'Belum Dicek';
+      const controls = (!isFinished && canEdit())
+        ? '<div class="flex flex-wrap items-center gap-1.5 mt-3 pt-3 border-t border-slate-200/70 dark:border-white/[0.06]">' +
+            '<button type="button" data-op-status="Sesuai" data-kode="' + esc(item.kode_aset) + '" class="' + (st === 'Sesuai' ? 'btn-primary' : 'btn-secondary') + ' !min-h-[32px] !px-2.5 text-xs">Sesuai</button>' +
+            '<button type="button" data-op-status="Rusak" data-kode="' + esc(item.kode_aset) + '" class="' + (st === 'Rusak' ? 'btn-primary' : 'btn-secondary') + ' !min-h-[32px] !px-2.5 text-xs">Rusak</button>' +
+            '<button type="button" data-op-status="Hilang" data-kode="' + esc(item.kode_aset) + '" class="' + (st === 'Hilang' ? 'btn-danger' : 'btn-secondary') + ' !min-h-[32px] !px-2.5 text-xs">Hilang</button>' +
+            '<button type="button" data-op-note="' + esc(item.kode_aset) + '" class="btn-ghost !min-h-[32px] !px-2.5 text-xs ml-auto">Catatan</button>' +
+          '</div>'
+        : '';
+
+      return '<div class="card !p-4">' +
+        '<div class="flex items-start justify-between gap-3">' +
+          '<div class="min-w-0">' +
+            '<p class="font-mono text-xs text-slate-500 dark:text-slate-400">' + esc(item.kode_aset) + '</p>' +
+            '<p class="font-semibold truncate">' + esc(item.nama_aset) + '</p>' +
+            '<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Lokasi sistem: ' + esc(item.lokasi_sistem || '-') + '</p>' +
+            (item.catatan ? '<p class="text-xs text-amber-600 dark:text-amber-400 mt-1">Catatan: ' + esc(item.catatan) + '</p>' : '') +
+          '</div>' +
+          '<div class="text-right shrink-0">' +
+            opnameStatusBadge(st) +
+            (item.checked_at ? '<p class="text-[11px] text-slate-400 mt-1">' + esc(formatDateTime(item.checked_at)) + '</p>' : '') +
+          '</div>' +
+        '</div>' +
+        controls +
+      '</div>';
+    }).join('');
+    UI.icons();
+  }
+
+  async function saveOpnameStatus(kode, statusOpname, catatan) {
+    const s = state.opname.current;
+    if (!s || s.status === 'Selesai') return;
+    try {
+      const res = await Api.saveOpnameItem({
+        opname_id: s.id,
+        kode_aset: kode,
+        status_opname: statusOpname,
+        catatan: catatan
+      });
+      const updated = res.data;
+      const idx = state.opname.items.findIndex((i) => i.kode_aset === kode);
+      if (idx >= 0) {
+        state.opname.items[idx] = updated;
+      } else if (updated) {
+        state.opname.items.unshift(updated);
+      }
+      renderOpnameDetail();
+      UI.toast(kode + ' ditandai ' + statusOpname + '.', 'success', 2000);
+    } catch (err) {
+      handleError(err);
+    }
+  }
+
+  async function handleOpnameScan(rawText) {
+    const kode = extractAssetCode(rawText);
+    if (!kode) {
+      UI.toast('Format kode aset tidak valid.', 'error');
+      return;
+    }
+    if (window.Scanner && typeof Scanner.close === 'function') Scanner.close();
+
+    const s = state.opname.current;
+    if (!s) return;
+    const item = state.opname.items.find((i) => i.kode_aset === kode);
+    if (item) {
+      await saveOpnameStatus(kode, 'Sesuai', item.catatan || '');
+    } else {
+      // Aset tidak ada dalam daftar lokasi target sesi ini -> cek di server apakah salah lokasi
+      await saveOpnameStatus(kode, 'Salah Lokasi', 'Ditemukan saat opname ' + (s.lokasi || 'lokasi ini'));
+    }
+  }
+
+  async function onFinishOpname() {
+    const s = state.opname.current;
+    if (!s) return;
+    const ok = await UI.confirmDialog({
+      title: 'Selesaikan Stock Opname?',
+      message: 'Setelah diselesaikan, hasil audit tidak dapat diubah lagi.',
+      okText: 'Selesaikan'
+    });
+    if (!ok) return;
+    UI.setLoading(true, 'Menyelesaikan sesi opname...');
+    try {
+      const res = await Api.finishOpname(s.id);
+      state.opname.current = res.data;
+      renderOpnameDetail();
+      UI.toast('Stock Opname selesai dan tersimpan di Sheets.', 'success');
+    } catch (err) {
+      handleError(err);
+    } finally {
+      UI.setLoading(false);
+    }
+  }
+
+  function exportOpnameCsv() {
+    const s = state.opname.current;
+    if (!s) return;
+    const rows = [['Kode Aset', 'Nama Aset', 'Lokasi Sistem', 'Status Opname', 'Catatan', 'Waktu Cek', 'Petugas']];
+    state.opname.items.forEach((i) => {
+      rows.push([
+        i.kode_aset || '',
+        i.nama_aset || '',
+        i.lokasi_sistem || '',
+        i.status_opname || 'Belum Dicek',
+        i.catatan || '',
+        i.checked_at || '',
+        i.checked_by || ''
+      ]);
+    });
+    const csv = rows.map((r) => r.map((v) => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'StockOpname_' + s.nama.replace(/[^a-zA-Z0-9_-]/g, '_') + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    UI.toast('Laporan CSV diunduh.', 'success');
+  }
+
+  /* ==========================================================
+   * 14. AKUN, GANTI PASSWORD, ADMIN, AUDIT LOG
    * ========================================================== */
 
   function loadAccount() {
@@ -1641,6 +1934,60 @@
     $('#labelInput').addEventListener('input', updateLabelCount);
     $('#btnLabelGenerate').addEventListener('click', onLabelPreview);
     $('#btnLabelPrint').addEventListener('click', onLabelPrint);
+
+    // Stock Opname
+    $('#btnHomeOpname').addEventListener('click', () => go('opname'));
+    $('#btnOpnameRefresh').addEventListener('click', () => loadOpname());
+    $('#btnOpnameToggleNew').addEventListener('click', () => {
+      const form = $('#formNewOpname');
+      form.classList.toggle('hidden');
+      if (!form.classList.contains('hidden')) $('#opnameNama').focus();
+    });
+    $('#btnCancelNewOpname').addEventListener('click', () => $('#formNewOpname').classList.add('hidden'));
+    $('#formNewOpname').addEventListener('submit', onCreateOpname);
+    $('#opnameSessionList').addEventListener('click', (e) => {
+      const card = e.target.closest('[data-opname-id]');
+      if (card) go('opname/' + encodeURIComponent(card.dataset.opnameId));
+    });
+    $('#btnOpnameBack').addEventListener('click', () => go('opname'));
+    $('#btnOpnameFinish').addEventListener('click', onFinishOpname);
+    $('#btnOpnameExport').addEventListener('click', exportOpnameCsv);
+    $('#btnOpnameScan').addEventListener('click', () => {
+      if (!needModule('Scanner', 'open')) return;
+      Scanner.open({ onDecode: handleOpnameScan });
+    });
+    $('#formOpnameManual').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = $('#opnameManualKode');
+      const val = input.value.trim();
+      if (!val) return;
+      input.value = '';
+      handleOpnameScan(val);
+    });
+    $('#opnameFilterTabs').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-opfilter]');
+      if (!btn) return;
+      state.opname.filter = btn.dataset.opfilter || '';
+      renderOpnameDetail();
+    });
+    $('#opnameItemList').addEventListener('click', (e) => {
+      const stBtn = e.target.closest('[data-op-status]');
+      if (stBtn) {
+        const kode = stBtn.dataset.kode;
+        const existing = state.opname.items.find((i) => i.kode_aset === kode);
+        saveOpnameStatus(kode, stBtn.dataset.opStatus, existing ? existing.catatan : '');
+        return;
+      }
+      const noteBtn = e.target.closest('[data-op-note]');
+      if (noteBtn) {
+        const kode = noteBtn.dataset.opNote;
+        const existing = state.opname.items.find((i) => i.kode_aset === kode);
+        const note = prompt('Catatan untuk ' + kode + ':', existing ? (existing.catatan || '') : '');
+        if (note !== null) {
+          saveOpnameStatus(kode, existing ? (existing.status_opname || 'Sesuai') : 'Sesuai', note.trim());
+        }
+      }
+    });
 
     // Akun
     $('#formPassword').addEventListener('submit', onChangePassword);

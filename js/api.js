@@ -127,7 +127,14 @@ const Api = (() => {
     deleteDocument: (id) => call('deleteDocument', { id: id }),
 
     // ----- Audit -----
-    listAuditLog: (params) => call('listAuditLog', params || {})
+    listAuditLog: (params) => call('listAuditLog', params || {}),
+
+    // ----- Stock Opname -----
+    listOpname: () => call('listOpname'),
+    createOpname: (data) => call('createOpname', data),
+    getOpname: (id) => call('getOpname', { id: id }),
+    saveOpnameItem: (data) => call('saveOpnameItem', data),
+    finishOpname: (id) => call('finishOpname', { id: id })
   };
 })();
 
